@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>書田外科訓練教室預借系統</title>
+<style>
+:root{--ink:#17212b;--muted:#637487;--line:#d9e3ea;--bg:#f5f7fa;--panel:#fff;--teal:#0e7c7b;--blue:#2f6fbb;--red:#b64444;--green:#27784d;--amber:#a96d10}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft JhengHei",Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}
+.shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}.side{background:#102333;color:#fff;padding:22px;display:flex;flex-direction:column;gap:22px}.brand{display:flex;gap:12px;align-items:center}.mark{width:42px;height:42px;border-radius:8px;background:#e8f6f4;color:var(--teal);display:grid;place-items:center;font-weight:900}.brand span,.muted{color:var(--muted);font-size:13px}.side .brand span,.login span{color:#b6c6d5}.nav{display:grid;gap:8px}.nav button,.ghost,.primary,.icon{border:1px solid transparent;border-radius:8px;min-height:40px;padding:0 14px}.nav button{background:transparent;color:#dce8f2;text-align:left}.nav button.active,.nav button:hover{background:#20394d;color:#fff}.login{margin-top:auto;border:1px solid #ffffff24;border-radius:8px;padding:14px;display:grid;gap:10px}
+.main{padding:26px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:20px}.eyebrow{margin:0 0 4px;color:var(--muted);font-size:13px}h1,h2,p{margin-top:0}h1{font-size:28px;margin-bottom:0}h2{font-size:20px;margin-bottom:0}.primary{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}.ghost,.icon{background:#fff;border-color:var(--line);color:var(--ink)}.icon{width:42px;padding:0}
+.view{display:none}.view.active{display:grid;gap:18px}.hero{position:relative;min-height:230px;border-radius:8px;overflow:hidden;background:linear-gradient(135deg,#bfe1e5,#f8fbfb 48%,#1b4c62)}.hero:before{content:"";position:absolute;inset:auto 0 0;height:85px;background:#10233355}.hero:after{content:"";position:absolute;right:70px;bottom:48px;width:360px;height:75px;border-radius:8px;background:linear-gradient(90deg,#fff,#d9eeee);box-shadow:-90px -34px 0 -10px #ffffffcc,-180px -16px 0 -10px #ffffffcc}.hero div{position:absolute;left:24px;bottom:22px;color:#fff;text-shadow:0 2px 12px #0008}.hero strong{font-size:26px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card,.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px #2030400d}.card{padding:18px}.card span{display:block;color:var(--muted);margin-bottom:8px}.card strong{font-size:26px}.panel{padding:20px}.head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}label,fieldset{display:grid;gap:7px;font-weight:700;color:#354656}input,select,textarea{width:100%;min-height:42px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fff}textarea{resize:vertical}.wide{grid-column:1/-1}.checks{border:1px solid var(--line);border-radius:8px;padding:14px;grid-template-columns:repeat(3,1fr)}.checks label,.agree{display:flex;align-items:center;gap:8px;font-weight:600}.checks input,.agree input{width:auto;min-height:auto}
+.estimate{background:#eef8f7;border:1px solid #c9e7e4;border-radius:8px;padding:14px}.estimate div{display:flex;justify-content:space-between;align-items:center}.estimate strong{font-size:24px;color:var(--teal)}
+.list{display:grid;gap:10px}.item{display:grid;grid-template-columns:140px 1fr auto;gap:14px;align-items:center;border-top:1px solid var(--line);padding:12px 0}.item:first-child{border-top:0}.badge{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:800;white-space:nowrap}.待審核{background:#fff5df;color:var(--amber)}.已核准{background:#e8f5ed;color:var(--green)}.需補件{background:#eaf1fb;color:var(--blue)}.已取消{background:#faeeee;color:var(--red)}
+table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}th{background:#f0f5f8}.table{overflow:auto}.actions{display:flex;gap:8px;align-items:center}.hide{display:none}.toast{position:fixed;right:22px;bottom:22px;background:#102333;color:#fff;padding:12px 16px;border-radius:8px;opacity:0;transform:translateY(12px);transition:.2s}.toast.show{opacity:1;transform:none}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.cards,.grid,.checks{grid-template-columns:1fr}.item{grid-template-columns:1fr}.top,.head{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="side">
+  <div class="brand"><div class="mark">書</div><div><b>預借系統</b><span>外科訓練教室</span></div></div>
+  <nav class="nav">
+    <button class="active" data-view="home">總覽</button>
+    <button data-view="apply">填寫申請</button>
+    <button data-view="schedule">檔期管理</button>
+    <button data-view="admin">後台審核</button>
+  </nav>
+  <div class="login"><span>後台狀態</span><b id="adminState">訪客模式</b><button class="ghost" data-view-btn="admin">登入後台</button></div>
+</aside>
+<main class="main">
+<header class="top">
+  <div><p class="eyebrow">NYCU Surgery - Shutien Training Room</p><h1>國立陽明交通大學外科學科－書田外科訓練教室預借</h1></div>
+  <div class="actions"><button class="icon" id="resetDemo" title="重置示範資料">↻</button><button class="primary" data-view-btn="apply">新增申請</button></div>
+</header>
+
+<section id="home" class="view active">
+  <div class="hero"><div><p>紙本申請表線上化</p><strong>申請、試算、審核與核定一次完成</strong></div></div>
+  <div class="cards">
+    <div class="card"><span>總申請</span><strong id="mTotal">0</strong></div>
+    <div class="card"><span>待審核</span><strong id="mPending">0</strong></div>
+    <div class="card"><span>已核准</span><strong id="mApproved">0</strong></div>
+    <div class="card"><span>核定金額</span><strong id="mMoney">$0</strong></div>
+  </div>
+  <section class="panel"><div class="head"><h2>近期申請</h2><button class="ghost" data-view-btn="schedule">看檔期</button></div><div id="recent" class="list"></div></section>
+</section>
+
+<section id="apply" class="view">
+<section class="panel">
+<div class="head"><h2>使用申請表</h2><span class="muted">送出後進入後台審核</span></div>
+<form id="form" class="grid">
+<label>申請單位類別<select name="unitType"><option>校內單位</option><option>校外單位</option></select></label>
+<label>申請單位<input name="unit" required placeholder="請填寫單位名稱"></label>
+<label>申請人<input name="applicant" required></label>
+<label>申請日期<input type="date" name="applyDate" required></label>
+<label>E-mail<input type="email" name="email" required></label>
+<label>聯絡電話<input name="phone" required></label>
+<label class="wide">使用目的<textarea name="purpose" rows="3" required></textarea></label>
+<fieldset class="wide checks"><legend>活動對象</legend><label><input type="checkbox" name="audience" value="本校學生">本校學生</label><label><input type="checkbox" name="audience" value="校外人士">校外人士</label><label>參加人數<input type="number" name="people" min="1" value="20"></label></fieldset>
+<label>使用起日<input type="date" name="startDate" required></label>
+<label>使用迄日<input type="date" name="endDate" required></label>
+<label>開始時間<input type="time" name="startTime" value="08:00" required></label>
+<label>結束時間<input type="time" name="endTime" value="12:00" required></label>
+<label>共幾時段<input type="number" name="periods" min="1" value="1"></label>
+<label>是否假日/夜間<select name="offHours"><option value="no">否</option><option value="yes">是，需要事前申請</option></select></label>
+<fieldset class="wide checks"><legend>使用動物</legend><label><input type="radio" name="animalNeed" value="不需要" checked>不需要</label><label><input type="radio" name="animalNeed" value="需要">需要</label><label>種類<input name="animalType"></label><label>數量<input type="number" name="animalCount" min="0" value="0"></label><label>重量<input name="animalWeight"></label></fieldset>
+<fieldset class="wide checks"><legend>租借空間</legend><label><input type="checkbox" name="rooms" value="多功能外科指導手術室">外科手術室含報到處</label><label><input type="checkbox" name="rooms" value="419教室">419教室(80人)</label><label><input type="checkbox" name="rooms" value="420教室">420教室(30人)</label></fieldset>
+<fieldset class="wide checks"><legend>費用項目需求</legend><label><input type="checkbox" name="extras" value="protective">手術基本防護耗材</label><label><input type="checkbox" name="extras" value="anesthesia">麻藥</label><label><input type="checkbox" name="extras" value="gas">氣體使用</label><label><input type="checkbox" name="extras" value="setup">場佈</label><label><input type="checkbox" name="extras" value="cleaning" checked>場地清潔</label><label><input type="checkbox" name="extras" value="duty" checked>值班費</label></fieldset>
+<label class="wide">附件提醒<select name="attachments"><option>將另附核准公文與活動議程</option><option>尚待補件</option><option>不適用</option></select></label>
+<label class="wide">備註<textarea name="note" rows="3" placeholder="設備、器械、耗材請至少7日前確認"></textarea></label>
+<div class="estimate wide"><div><span>預估費用</span><strong id="estimate">$0</strong></div><span class="muted">實際金額以外科學科後台核定為準。</span></div>
+<label class="agree wide"><input type="checkbox" required>我已詳讀租借辦法以及注意事項，並同意送出申請。</label>
+<div class="actions wide"><button type="reset" class="ghost">清除</button><button class="primary">送出申請</button></div>
+</form>
+</section>
+</section>
+
+<section id="schedule" class="view">
+<section class="panel"><div class="head"><h2>檔期管理</h2><select id="statusFilter"><option value="all">全部</option><option>待審核</option><option>已核准</option><option>需補件</option><option>已取消</option></select></div><div id="scheduleList" class="list"></div></section>
+</section>
+
+<section id="admin" class="view">
+<section id="loginPanel" class="panel">
+  <h2>後台登入</h2><p class="muted">示範帳號：admin，密碼：shutien115</p>
+  <div class="actions"><input id="user" placeholder="帳號"><input id="pass" type="password" placeholder="密碼"><button id="loginBtn" class="primary">登入</button></div>
+</section>
+<section id="adminPanel" class="panel hide">
+  <div class="head"><h2>申請案件審核</h2><button id="exportBtn" class="ghost">匯出 CSV</button></div>
+  <div class="table"><table><thead><tr><th>日期</th><th>單位/申請人</th><th>空間</th><th>時段</th><th>試算</th><th>折扣</th><th>狀態</th><th>審核</th></tr></thead><tbody id="adminRows"></tbody></table></div>
+</section>
+</section>
+</main>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const K="shutien-bookings-v1",AK="shutien-admin-v1";
+const roomRate={"多功能外科指導手術室":15000,"419教室":12000,"420教室":9000};
+const cleaning={"多功能外科指導手術室":5000,"419教室":2000,"420教室":1000};
+const discountMap={"全額收取":1,"場地費全免":0,"酌收30%":.3,"酌收50%":.5,"酌收70%":.7,"酌收80%":.8};
+let admin=localStorage.getItem(AK)==="1";
+let data=JSON.parse(localStorage.getItem(K)||"null")||demo();
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+document.addEventListener("DOMContentLoaded",()=>{bind();renderAll();});
+function demo(){let d=new Date().toISOString().slice(0,10);return[{id:crypto.randomUUID(),unitType:"校內單位",unit:"外科學科",applicant:"王醫師",applyDate:d,email:"demo@nycu.edu.tw",phone:"02-0000-0000",purpose:"住院醫師縫合訓練",audience:["本校學生"],people:24,startDate:d,endDate:d,startTime:"08:00",endTime:"12:00",periods:1,offHours:"no",animalNeed:"不需要",animalType:"",animalCount:0,animalWeight:"",rooms:["419教室"],extras:["protective","cleaning","duty"],attachments:"將另附核准公文與活動議程",note:"",status:"待審核",discount:"全額收取",handlerOpinion:"",directorOpinion:""}]}
+function bind(){
+ $$(".nav button,[data-view-btn]").forEach(b=>b.onclick=()=>show(b.dataset.view||b.dataset.viewBtn));
+ $("#form").oninput=()=>$("#estimate").textContent=money(calc(formData()).total);
+ $("#form").onsubmit=e=>{e.preventDefault();let x=formData();x.id=crypto.randomUUID();x.status="待審核";x.discount="全額收取";x.handlerOpinion="";x.directorOpinion="";data.unshift(x);save();e.target.reset();$("#estimate").textContent=money(0);show("home");toast("申請已送出");};
+ $("#loginBtn").onclick=()=>{if($("#user").value==="admin"&&$("#pass").value==="shutien115"){admin=true;localStorage.setItem(AK,"1");renderAdmin();toast("已登入後台")}else toast("帳號或密碼不正確")};
+ $("#statusFilter").onchange=renderSchedule;
+ $("#exportBtn").onclick=exportCsv;
+ $("#resetDemo").onclick=()=>{data=demo();save();renderAll();toast("已重置示範資料")};
+}
+function show(id){$$(".view").forEach(v=>v.classList.toggle("active",v.id===id));$$(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===id));renderAll();}
+function formData(){let f=new FormData($("#form"));return{unitType:f.get("unitType"),unit:f.get("unit"),applicant:f.get("applicant"),applyDate:f.get("applyDate"),email:f.get("email"),phone:f.get("phone"),purpose:f.get("purpose"),audience:f.getAll("audience"),people:+f.get("people")||0,startDate:f.get("startDate"),endDate:f.get("endDate"),startTime:f.get("startTime"),endTime:f.get("endTime"),periods:+f.get("periods")||1,offHours:f.get("offHours"),animalNeed:f.get("animalNeed"),animalType:f.get("animalType"),animalCount:+f.get("animalCount")||0,animalWeight:f.get("animalWeight"),rooms:f.getAll("rooms"),extras:f.getAll("extras"),attachments:f.get("attachments"),note:f.get("note")}}
+function calc(x){
+ let periods=x.periods||1, people=x.people||0, animals=x.animalCount||0;
+ let base=(x.rooms||[]).reduce((s,r)=>s+(roomRate[r]||0)*periods,0);
+ let extra=0;
+ if(x.extras?.includes("protective")) extra+=800*people;
+ if(x.extras?.includes("anesthesia")) extra+=2500*animals;
+ if(x.extras?.includes("gas")) extra+=3000*animals;
+ if(x.extras?.includes("setup")) extra+=1000*periods;
+ if(x.extras?.includes("cleaning")) extra+=(x.rooms||[]).reduce((s,r)=>s+(cleaning[r]||0),0);
+ if(x.extras?.includes("duty")) extra+=4000*periods;
+ let rate=discountMap[x.discount||"全額收取"]??1;
+ return{base,extra,total:Math.round(base*rate+extra)};
+}
+function renderAll(){renderMetrics();renderRecent();renderSchedule();renderAdmin();}
+function renderMetrics(){let approved=data.filter(x=>x.status==="已核准");$("#mTotal").textContent=data.length;$("#mPending").textContent=data.filter(x=>x.status==="待審核").length;$("#mApproved").textContent=approved.length;$("#mMoney").textContent=money(approved.reduce((s,x)=>s+calc(x).total,0));$("#adminState").textContent=admin?"已登入":"訪客模式";}
+function renderRecent(){$("#recent").innerHTML=data.slice(0,5).map(itemHtml).join("")||"<p class='muted'>尚無申請</p>";}
+function renderSchedule(){let f=$("#statusFilter")?.value||"all";$("#scheduleList").innerHTML=data.filter(x=>f==="all"||x.status===f).map(itemHtml).join("")||"<p class='muted'>沒有符合條件的案件</p>";}
+function itemHtml(x){return`<article class="item"><div><b>${x.startDate||"-"}</b><br><span class="muted">${x.startTime||""}-${x.endTime||""}</span></div><div><b>${esc(x.purpose||"未命名活動")}</b><br><span class="muted">${esc(x.unit)}｜${(x.rooms||[]).join("、")}｜${x.people||0}人</span></div><span class="badge ${x.status}">${x.status}</span></article>`}
+function renderAdmin(){renderMetrics();$("#loginPanel").classList.toggle("hide",admin);$("#adminPanel").classList.toggle("hide",!admin);if(!admin)return;$("#adminRows").innerHTML=data.map(x=>`<tr><td>${x.startDate}<br><span class="muted">${x.startTime}-${x.endTime}</span></td><td><b>${esc(x.unit)}</b><br>${esc(x.applicant)}<br><span class="muted">${esc(x.phone)}</span></td><td>${(x.rooms||[]).join("<br>")}</td><td>${x.periods} 時段</td><td>${money(calc(x).total)}</td><td><select data-discount="${x.id}">${Object.keys(discountMap).map(d=>`<option ${d===x.discount?"selected":""}>${d}</option>`).join("")}</select></td><td><select data-status="${x.id}">${["待審核","已核准","需補件","已取消"].map(s=>`<option ${s===x.status?"selected":""}>${s}</option>`).join("")}</select></td><td><textarea data-opinion="${x.id}" rows="2" placeholder="承辦人/主任審核意見">${esc(x.handlerOpinion||"")}</textarea><button class="ghost" data-del="${x.id}">刪除</button></td></tr>`).join("");
+ $$("[data-status]").forEach(el=>el.onchange=()=>upd(el.dataset.status,{status:el.value}));
+ $$("[data-discount]").forEach(el=>el.onchange=()=>upd(el.dataset.discount,{discount:el.value}));
+ $$("[data-opinion]").forEach(el=>el.onchange=()=>upd(el.dataset.opinion,{handlerOpinion:el.value}));
+ $$("[data-del]").forEach(el=>el.onclick=()=>{data=data.filter(x=>x.id!==el.dataset.del);save();renderAll();toast("案件已刪除")});
+}
+function upd(id,patch){let x=data.find(i=>i.id===id);Object.assign(x,patch);save();renderAll();toast("已更新")}
+function save(){localStorage.setItem(K,JSON.stringify(data))}
+function money(n){return "NT$ "+Number(n||0).toLocaleString("zh-TW")}
+function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function exportCsv(){let rows=[["日期","單位","申請人","目的","空間","人數","時段","狀態","金額"],...data.map(x=>[x.startDate,x.unit,x.applicant,x.purpose,(x.rooms||[]).join("/"),x.people,x.periods,x.status,calc(x).total])];let csv="\ufeff"+rows.map(r=>r.map(c=>`"${String(c??"").replaceAll('"','""')}"`).join(",")).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="書田外科訓練教室申請案件.csv";a.click();}
+function toast(t){let el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),1800)}
+</script>
+</body>
+</html>
