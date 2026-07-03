@@ -12,7 +12,7 @@
 .view{display:none}.view.active{display:grid;gap:18px}.hero{position:relative;min-height:230px;border-radius:8px;overflow:hidden;background:linear-gradient(135deg,#d2eef1,#f8fbfb 46%,#214f63)}.hero:before{content:"";position:absolute;inset:auto 0 0;height:95px;background:#10233366}.hero:after{content:"";position:absolute;right:54px;bottom:50px;width:380px;height:78px;border-radius:8px;background:linear-gradient(90deg,#fff,#d9eeee);box-shadow:-90px -34px 0 -10px #ffffffcc,-180px -16px 0 -10px #ffffffcc}.hero div{position:absolute;left:24px;bottom:22px;color:#fff;text-shadow:0 2px 12px #0008}.hero strong{font-size:26px}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card,.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px #2030400d}.card{padding:18px}.card span{display:block;color:var(--muted);margin-bottom:8px}.card strong{font-size:26px}.panel{padding:20px}.head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}label,fieldset{display:grid;gap:7px;font-weight:700;color:#354656}input,select,textarea{width:100%;min-height:42px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fff}textarea{resize:vertical}.wide{grid-column:1/-1}.checks{border:1px solid var(--line);border-radius:8px;padding:14px;grid-template-columns:repeat(3,1fr)}.checks label,.agree{display:flex;align-items:center;gap:8px;font-weight:600}.checks input,.agree input{width:auto;min-height:auto}
-.estimate{background:#eef8f7;border:1px solid #c9e7e4;border-radius:8px;padding:14px}.estimate div{display:flex;justify-content:space-between;align-items:center}.estimate strong{font-size:24px;color:var(--teal)}
+.estimate{background:#eef8f7;border:1px solid #c9e7e4;border-radius:8px;padding:14px}.estimate div{display:flex;justify-content:space-between;align-items:center}.estimate strong{font-size:24px;color:var(--teal)}.stepper{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.step-dot{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:8px;padding:10px;text-align:left;font-weight:800}.step-dot.active{background:#e9f8f7;color:var(--teal);border-color:#b8dfdc}.form-step{display:none}.form-step.active{display:grid}.fee-detail{display:grid;gap:8px}.fee-line{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #d6e9e6;padding:7px 0}.fee-line.total{border-bottom:0;font-size:18px;font-weight:900;color:var(--teal)}.notice{border:1px solid #f0d49b;background:#fff8e8;color:#7b520e;border-radius:8px;padding:12px}.summary{display:grid;gap:10px}.summary-row{display:grid;grid-template-columns:150px 1fr;gap:12px;border-bottom:1px solid var(--line);padding:8px 0}
 .list{display:grid;gap:10px}.item{display:grid;grid-template-columns:150px 1fr auto;gap:14px;align-items:center;border-top:1px solid var(--line);padding:12px 0}.item:first-child{border-top:0}.badge{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:800;white-space:nowrap}.待審核{background:#fff5df;color:var(--amber)}.已核准,.可申請{background:#e8f5ed;color:var(--green)}.需補件,.已有申請{background:#eaf1fb;color:var(--blue)}.已取消,.不可申請{background:#faeeee;color:var(--red)}
 .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.info-grid .panel{min-height:150px}.price{display:grid;gap:10px}.price-row{display:grid;grid-template-columns:1fr auto;gap:12px;border-bottom:1px solid var(--line);padding:10px 0}.price-row:last-child{border-bottom:0}.result{border:1px solid var(--line);border-radius:8px;padding:16px;background:#fbfdfe}.result strong{font-size:22px;color:var(--teal)}
 table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}th{background:#f0f5f8}.table{overflow:auto}.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.toast{position:fixed;right:22px;bottom:22px;background:#102333;color:#fff;padding:12px 16px;border-radius:8px;opacity:0;transform:translateY(12px);transition:.2s}.toast.show{opacity:1;transform:none}
@@ -22,7 +22,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
 <body>
 <div class="shell">
 <aside class="side">
-  <div class="brand"><div class="mark">ST</div><div><b>書田外科訓練教室</b><span>預借申請系統</span></div></div>
+  <div class="brand"><div class="mark">ST</div><div><b>書田外科訓練中心</b><span>預借申請系統</span></div></div>
   <nav class="nav" id="frontNav">
     <button class="active" data-view="home">首頁</button>
     <button data-view="venue">場地介紹</button>
@@ -49,7 +49,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
 </aside>
 <main class="main">
 <header class="top">
-  <div><p class="eyebrow">NYCU Surgery - Shutien Training Room</p><h1>書田外科訓練教室預借系統</h1></div>
+  <div><p class="eyebrow">NYCU Surgery - Shutien Training Room</p><h1>書田外科訓練中心預借系統</h1></div>
   <div class="actions"><button class="primary" data-view-btn="apply">我要申請</button></div>
 </header>
 
@@ -111,30 +111,51 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
 
 <section id="apply" class="view">
 <section class="panel">
-<div class="head"><h2>我要申請</h2><span class="muted">送出後會建立案件編號</span></div>
+<div class="head"><h2>我要申請</h2><span class="muted">請依四個步驟完成預借申請</span></div>
+<div class="stepper" id="applyStepper">
+  <div class="step-dot active" data-step-dot="1">Step 1<br><span class="muted">基本資料</span></div>
+  <div class="step-dot" data-step-dot="2">Step 2<br><span class="muted">借用資訊</span></div>
+  <div class="step-dot" data-step-dot="3">Step 3<br><span class="muted">加選與費用</span></div>
+  <div class="step-dot" data-step-dot="4">Step 4<br><span class="muted">確認送出</span></div>
+</div>
 <form id="form" class="grid">
-<label>申請單位類別<select name="unitType"><option>校內單位</option><option>校外單位</option></select></label>
-<label>申請單位<input name="unit" required placeholder="請填寫單位名稱"></label>
-<label>申請人<input name="applicant" required></label>
-<label>申請日期<input type="date" name="applyDate" required></label>
-<label>E-mail<input type="email" name="email" required></label>
-<label>聯絡電話<input name="phone" required></label>
-<label class="wide">申請目的<textarea name="purpose" rows="3" required></textarea></label>
-<fieldset class="wide checks"><legend>參與對象</legend><label><input type="checkbox" name="audience" value="本校學生">本校學生</label><label><input type="checkbox" name="audience" value="校外人士">校外人士</label><label>預估人數<input type="number" name="people" min="1" value="20"></label></fieldset>
-<label>使用開始日期<input type="date" name="startDate" required></label>
-<label>使用結束日期<input type="date" name="endDate" required></label>
-<label>開始時間<input type="time" name="startTime" value="08:00" required></label>
-<label>結束時間<input type="time" name="endTime" value="12:00" required></label>
-<label>使用時段<input type="number" name="periods" min="1" value="1"></label>
-<label>是否假日/夜間<select name="offHours"><option value="no">否</option><option value="yes">是，需要事前申請</option></select></label>
-<fieldset class="wide checks"><legend>動物需求</legend><label><input type="radio" name="animalNeed" value="不需要" checked>不需要</label><label><input type="radio" name="animalNeed" value="需要">需要</label><label>種類<input name="animalType"></label><label>數量<input type="number" name="animalCount" min="0" value="0"></label><label>重量<input name="animalWeight"></label></fieldset>
-<fieldset class="wide checks"><legend>使用空間</legend><label><input type="checkbox" name="rooms" value="多功能外科指導手術室">多功能外科指導手術室</label><label><input type="checkbox" name="rooms" value="419教室">419教室</label><label><input type="checkbox" name="rooms" value="420教室">420教室</label></fieldset>
-<fieldset class="wide checks"><legend>加選項目</legend><label><input type="checkbox" name="extras" value="protective">防護耗材</label><label><input type="checkbox" name="extras" value="anesthesia">麻醉</label><label><input type="checkbox" name="extras" value="gas">氣體使用</label><label><input type="checkbox" name="extras" value="setup">場地設定</label><label><input type="checkbox" name="extras" value="cleaning" checked>清潔費</label><label><input type="checkbox" name="extras" value="duty" checked>值班人員</label></fieldset>
-<label class="wide">附件狀態<select name="attachments"><option>將另附核准公文與活動議程</option><option>已備妥附件</option><option>無附件</option></select></label>
-<label class="wide">備註<textarea name="note" rows="3" placeholder="請補充特殊需求、設備或注意事項"></textarea></label>
-<div class="estimate wide"><div><span>費用試算</span><strong id="estimate">NT$ 0</strong></div><span class="muted">此金額為系統試算，後台可依規定調整折扣與審核狀態。</span></div>
-<label class="agree wide"><input type="checkbox" required>我已詳讀租借辦法以及注意事項，並同意送出申請。</label>
-<div class="actions wide"><button type="reset" class="ghost">清除</button><button class="primary">送出申請</button></div>
+<input type="hidden" name="applyDate">
+<input type="hidden" name="attachments" value="將另附核准公文與活動議程">
+<section class="form-step active wide grid" data-step="1">
+  <label>申請單位類別<select name="unitType"><option>校內單位</option><option>校外單位</option></select></label>
+  <label>申請單位<input name="unit" required placeholder="請填寫單位名稱"></label>
+  <label>申請人<input name="applicant" required></label>
+  <label>E-mail<input type="email" name="email" required></label>
+  <label>聯絡電話<input name="phone" required></label>
+  <label class="wide">申請目的<textarea name="purpose" rows="3" required></textarea></label>
+  <div class="actions wide"><button type="button" class="primary" data-next-step>下一步</button></div>
+</section>
+<section class="form-step wide grid" data-step="2">
+  <label>使用開始日期<input type="date" name="startDate" required></label>
+  <label>使用結束日期<input type="date" name="endDate" required></label>
+  <label>開始時間<input type="time" name="startTime" value="08:00" required></label>
+  <label>結束時間<input type="time" name="endTime" value="12:00" required></label>
+  <fieldset class="wide checks"><legend>使用空間</legend><label><input type="checkbox" name="rooms" value="多功能外科指導手術室">多功能外科指導手術室</label><label><input type="checkbox" name="rooms" value="419教室">419教室</label><label><input type="checkbox" name="rooms" value="420教室">420教室</label></fieldset>
+  <label>預估人數<input type="number" name="people" min="1" value="20"></label>
+  <label>使用時段<input type="number" name="periods" min="1" value="1"></label>
+  <label>是否假日/夜間或超出 08:00–17:00<select name="offHours"><option value="no">否</option><option value="yes">是，需要事前申請</option></select></label>
+  <fieldset class="wide checks"><legend>參與對象</legend><label><input type="checkbox" name="audience" value="本校學生">本校學生</label><label><input type="checkbox" name="audience" value="校外人士">校外人士</label></fieldset>
+  <div class="notice wide hide" id="offHoursNotice">超出平日 08:00–17:00 之使用需求，須事先申請，並依實際使用時間加收工作人員值班費。</div>
+  <div class="actions wide"><button type="button" class="ghost" data-prev-step>上一步</button><button type="button" class="primary" data-next-step>下一步</button></div>
+</section>
+<section class="form-step wide grid" data-step="3">
+  <fieldset class="wide checks"><legend>加選項目</legend><label><input type="checkbox" name="extras" value="protective">防護耗材</label><label><input type="checkbox" name="extras" value="anesthesia">麻醉</label><label><input type="checkbox" name="extras" value="gas">麻醉氣體</label></fieldset>
+  <fieldset class="wide checks"><legend>動物需求</legend><label><input type="radio" name="animalNeed" value="不需要" checked>不需要</label><label><input type="radio" name="animalNeed" value="需要">需要</label><label>種類<input name="animalType"></label><label>數量<input type="number" name="animalCount" min="0" value="0"></label><label>重量<input name="animalWeight"></label></fieldset>
+  <label class="wide">備註<textarea name="note" rows="3" placeholder="請補充特殊需求、設備或注意事項"></textarea></label>
+  <div class="estimate wide"><div><span>費用明細</span><strong id="estimate">NT$ 0</strong></div><div id="feeDetail" class="fee-detail"></div><span class="muted">清潔費與手術室場地設定費會依使用空間自動計算；值班費第一版先提醒，後台再依實際使用時間核定。</span></div>
+  <div class="actions wide"><button type="button" class="ghost" data-prev-step>上一步</button><button type="button" class="primary" data-next-step>下一步</button></div>
+</section>
+<section class="form-step wide grid" data-step="4">
+  <div class="result wide"><h3>申請摘要</h3><div id="applicationSummary" class="summary"></div></div>
+  <div class="estimate wide"><div><span>確認費用明細</span><strong id="finalEstimate">NT$ 0</strong></div><div id="finalFeeDetail" class="fee-detail"></div></div>
+  <label class="agree wide"><input type="checkbox" required>我已詳讀租借辦法以及注意事項，並同意送出申請。</label>
+  <div class="actions wide"><button type="button" class="ghost" data-prev-step>上一步</button><button type="reset" class="ghost">清除</button><button class="primary">送出申請</button></div>
+</section>
 </form>
 </section>
 </section>
@@ -212,13 +233,17 @@ const discountMap={"全額收取":1,"場地費全免":0,"酌收30%":.3,"酌收50
 let admin=sessionStorage.getItem(AK)==="1";
 let adminToken=sessionStorage.getItem(TK)||"";
 let data=[];
+let applyStep=1;
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 document.addEventListener("DOMContentLoaded",async()=>{bind();initDefaults();renderShell();await renderAvailability();if(admin){await refreshAdmin();show("dashboard")}else show("home");});
 function bind(){
  $$(".nav button,[data-view-btn]").forEach(b=>b.onclick=()=>show(b.dataset.view||b.dataset.viewBtn));
  $("#adminEntry").onclick=()=>show(admin?"dashboard":"loginView");
- $("#form").oninput=()=>$("#estimate").textContent=money(calc(formData()).total);
+ $("#form").oninput=updateApplicationReview;
  $("#form").onsubmit=submitApplication;
+ $("#form").onreset=()=>setTimeout(()=>{applyStep=1;showApplyStep();updateApplicationReview()},0);
+ $$("[data-next-step]").forEach(b=>b.onclick=()=>goApplyStep(1));
+ $$("[data-prev-step]").forEach(b=>b.onclick=()=>goApplyStep(-1));
  $("#queryForm").onsubmit=queryApplication;
  $("#loginBtn").onclick=loginAdmin;
  $("#logoutBtn").onclick=()=>{admin=false;adminToken="";sessionStorage.removeItem(AK);sessionStorage.removeItem(TK);data=[];renderShell();show("home");toast("已登出後台")};
@@ -228,23 +253,49 @@ function bind(){
  $("#availabilityStart").onchange=renderAvailability;
  $("#availabilityDays").onchange=renderAvailability;
 }
-function initDefaults(){let d=today();$$('input[name="applyDate"],#availabilityStart').forEach(el=>{if(!el.value)el.value=d})}
+function initDefaults(){let d=today();$$('input[name="applyDate"],#availabilityStart').forEach(el=>{if(!el.value)el.value=d});showApplyStep();updateApplicationReview()}
 async function show(id){if(isAdminView(id)&&!admin)id="loginView";$$(".view").forEach(v=>v.classList.toggle("active",v.id===id));$$(".nav button").forEach(b=>b.classList.toggle("active",(b.dataset.view||b.dataset.viewBtn)===id));renderShell();if(id==="availability")await renderAvailability();if(isAdminView(id)){await refreshAdmin();renderAll()}}
 function isAdminView(id){return ["dashboard","pending","allCases","adminCalendar","billing","export","settings"].includes(id)}
-function formData(){let f=new FormData($("#form"));return{unitType:f.get("unitType"),unit:f.get("unit"),applicant:f.get("applicant"),applyDate:f.get("applyDate"),email:f.get("email"),phone:f.get("phone"),purpose:f.get("purpose"),audience:f.getAll("audience"),people:+f.get("people")||0,startDate:f.get("startDate"),endDate:f.get("endDate"),startTime:f.get("startTime"),endTime:f.get("endTime"),periods:+f.get("periods")||1,offHours:f.get("offHours"),animalNeed:f.get("animalNeed"),animalType:f.get("animalType"),animalCount:+f.get("animalCount")||0,animalWeight:f.get("animalWeight"),rooms:f.getAll("rooms"),extras:f.getAll("extras"),attachments:f.get("attachments"),note:f.get("note")}}
+function formData(){let f=new FormData($("#form"));let x={unitType:f.get("unitType"),unit:f.get("unit"),applicant:f.get("applicant"),applyDate:f.get("applyDate")||today(),email:f.get("email"),phone:f.get("phone"),purpose:f.get("purpose"),audience:f.getAll("audience"),people:+f.get("people")||0,startDate:f.get("startDate"),endDate:f.get("endDate"),startTime:f.get("startTime"),endTime:f.get("endTime"),periods:+f.get("periods")||1,offHours:f.get("offHours"),animalNeed:f.get("animalNeed"),animalType:f.get("animalType"),animalCount:+f.get("animalCount")||0,animalWeight:f.get("animalWeight"),rooms:f.getAll("rooms"),extras:f.getAll("extras"),attachments:f.get("attachments"),note:f.get("note")};let c=calc(x);x.estimatedAmount=c.total;x.offHoursNotice=needsDutyNotice(x);return x}
 function calc(x){
  let periods=x.periods||1, people=x.people||0, animals=x.animalCount||0;
  let base=(x.rooms||[]).reduce((s,r)=>s+(roomRate[r]||0)*periods,0);
- let extra=0;
- if(x.extras?.includes("protective")) extra+=800*people;
- if(x.extras?.includes("anesthesia")) extra+=2500*animals;
- if(x.extras?.includes("gas")) extra+=3000*animals;
- if(x.extras?.includes("setup")) extra+=1000*periods;
- if(x.extras?.includes("cleaning")) extra+=(x.rooms||[]).reduce((s,r)=>s+(cleaning[r]||0),0);
- if(x.extras?.includes("duty")) extra+=4000*periods;
+ let protective=x.extras?.includes("protective")?800*people:0;
+ let anesthesia=x.extras?.includes("anesthesia")?2500*animals:0;
+ let gas=x.extras?.includes("gas")?3000*animals:0;
+ let setup=(x.rooms||[]).includes("多功能外科指導手術室")?1000*periods:0;
+ let clean=(x.rooms||[]).reduce((s,r)=>s+(cleaning[r]||0),0);
  let rate=discountMap[x.discount||"全額收取"]??1;
- return{base,extra,total:Math.round(base*rate+extra)};
+ let details=[
+  ["場地費",Math.round(base*rate)],
+  ["防護耗材費",protective],
+  ["麻醉費",anesthesia],
+  ["麻醉氣體費",gas],
+  ["場地設定費",setup],
+  ["清潔費",clean]
+ ];
+ return{base,extra:protective+anesthesia+gas+setup+clean,total:Math.round(base*rate+protective+anesthesia+gas+setup+clean),details};
 }
+function goApplyStep(delta){if(delta>0&&!validateCurrentStep())return;applyStep=Math.max(1,Math.min(4,applyStep+delta));showApplyStep();updateApplicationReview()}
+function validateCurrentStep(){let fields=$$(`.form-step[data-step="${applyStep}"] input,.form-step[data-step="${applyStep}"] select,.form-step[data-step="${applyStep}"] textarea`).filter(el=>!el.disabled&&el.type!=="hidden");for(let el of fields){if(!el.checkValidity()){el.reportValidity();return false}}if(applyStep===2&&formData().rooms.length===0){toast("請至少選擇一個使用空間");return false}return true}
+function showApplyStep(){$$(".form-step").forEach(s=>s.classList.toggle("active",s.dataset.step==applyStep));$$("[data-step-dot]").forEach(s=>s.classList.toggle("active",s.dataset.stepDot==applyStep))}
+function needsDutyNotice(x){let start=toMinutes(x.startTime||"08:00"),end=toMinutes(x.endTime||"17:00");return x.offHours==="yes"||start<480||end>1020}
+function toMinutes(t){let [h,m]=String(t||"00:00").split(":").map(Number);return (h||0)*60+(m||0)}
+function updateApplicationReview(){let x=formData(),c=calc(x);$("#estimate").textContent=money(c.total);$("#finalEstimate").textContent=money(c.total);renderFeeDetail("#feeDetail",c);renderFeeDetail("#finalFeeDetail",c);$("#offHoursNotice").classList.toggle("hide",!needsDutyNotice(x));renderApplicationSummary(x)}
+function renderFeeDetail(target,c){let el=$(target);if(!el)return;el.innerHTML=c.details.map(([name,value])=>`<div class="fee-line"><span>${name}</span><b>${money(value)}</b></div>`).join("")+`<div class="fee-line total"><span>預估總計</span><b>${money(c.total)}</b></div>`}
+function renderApplicationSummary(x){let el=$("#applicationSummary");if(!el)return;let warning=needsDutyNotice(x)?"<div class='notice'>超出平日 08:00–17:00 之使用需求，須事先申請，並依實際使用時間加收工作人員值班費。</div>":"";el.innerHTML=[
+ ["申請單位",`${x.unitType||""} ${esc(x.unit||"")}`],
+ ["申請人",`${esc(x.applicant||"")} / ${esc(x.email||"")} / ${esc(x.phone||"")}`],
+ ["申請目的",esc(x.purpose||"")],
+ ["使用日期",`${esc(x.startDate||"")} 至 ${esc(x.endDate||"")}`],
+ ["使用時間",`${esc(x.startTime||"")} - ${esc(x.endTime||"")}，${x.periods||1} 時段`],
+ ["使用空間",(x.rooms||[]).map(esc).join("、")||"未選擇"],
+ ["預估人數",`${x.people||0} 人`],
+ ["加選項目",extraLabels(x).join("、")||"無"],
+ ["動物需求",x.animalNeed==="需要"?`${esc(x.animalType||"未填種類")}，${x.animalCount||0} 隻，${esc(x.animalWeight||"未填重量")}`:"不需要"],
+ ["備註",esc(x.note||"無")]
+].map(([k,v])=>`<div class="summary-row"><b>${k}</b><span>${v}</span></div>`).join("")+warning}
+function extraLabels(x){let labels=[];if(x.extras?.includes("protective"))labels.push("防護耗材");if(x.extras?.includes("anesthesia"))labels.push("麻醉");if(x.extras?.includes("gas"))labels.push("麻醉氣體");return labels}
 async function api(action,payload={}){
  let res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...payload})});
  let text=await res.text();
@@ -259,10 +310,12 @@ async function submitApplication(e){
   let res=await api("submitApplication",{application:x});
   if(!res.ok)throw new Error(res.error||"申請送出失敗");
   e.target.reset();
-  $("#estimate").textContent=money(0);
+  applyStep=1;
+  showApplyStep();
+  updateApplicationReview();
   show("query");
   $("#queryResult").classList.remove("hide");
-  $("#queryResult").innerHTML=`<p>申請已送出，案件編號為：</p><strong>${esc(res.caseNo)}</strong><p class="muted">請保存案件編號，之後可搭配 Email 查詢進度。</p>`;
+  $("#queryResult").innerHTML=`<h3>✅ 申請已送出</h3><p>案件編號：<strong>${esc(res.caseNo)}</strong></p><p class="muted">請保存案件編號，後續可搭配 Email 查詢申請進度。</p><p class="muted">預計 3–5 個工作天內完成審核。</p>`;
   await renderAvailability();
   toast("申請已送出");
  }catch(err){
@@ -317,22 +370,26 @@ function normalizeCases(cases){
  return cases.map(x=>({
   ...x,
   id:x.caseNo,
-  rooms:x.rooms||"",
+  status:normalizeStatus(x.status),
+  rooms:normalizeRooms(x.rooms),
   amount:+x.amount||0,
   people:+x.people||0,
   periods:+x.periods||0
  }));
 }
+function normalizeStatus(status){let s=String(status||"待審核").trim();if(s.includes("核准"))return"已核准";if(s.includes("補件"))return"需補件";if(s.includes("取消"))return"已取消";if(s.includes("待")||s.includes("審"))return"待審核";return s}
+function normalizeRooms(rooms){if(Array.isArray(rooms))return rooms;if(!rooms)return[];return String(rooms).split(/[、,，/｜|]/).map(s=>s.trim()).filter(Boolean)}
+function isStatus(x,status){return normalizeStatus(x.status)===status}
 function renderAll(){renderShell();renderMetrics();renderPending();renderAdminCalendar();renderTables()}
 function renderShell(){$("#frontNav").classList.toggle("hide",admin);$("#adminNav").classList.toggle("hide",!admin);$("#adminState").textContent=admin?"後台管理者":"申請人前台";$("#adminEntry").textContent=admin?"回到 Dashboard":"後台登入"}
-function renderMetrics(){let approved=data.filter(x=>x.status==="已核准");$("#mTotal").textContent=data.length;$("#mPending").textContent=data.filter(x=>x.status==="待審核").length;$("#mApproved").textContent=approved.length;$("#mMoney").textContent=money(approved.reduce((s,x)=>s+(+x.amount||0),0))}
+function renderMetrics(){let approved=data.filter(x=>isStatus(x,"已核准"));$("#mTotal").textContent=data.length;$("#mPending").textContent=data.filter(x=>isStatus(x,"待審核")).length;$("#mApproved").textContent=approved.length;$("#mMoney").textContent=money(approved.reduce((s,x)=>s+(+x.amount||0),0))}
 async function renderAvailability(){let el=$("#availabilityList");if(!el)return;let start=$("#availabilityStart")?.value||today(),days=+($("#availabilityDays")?.value||14);el.innerHTML="<p class='muted'>讀取可預約日期中...</p>";try{let res=await api("availability",{startDate:start,days});if(!res.ok)throw new Error(res.error||"讀取失敗");el.innerHTML=(res.dates||[]).map(x=>{let d=new Date(x.date+"T00:00:00");return`<article class="item"><div><b>${esc(x.date)}</b><br><span class="muted">${weekday(d)}</span></div><div>${x.available?"目前可提出申請":"已有申請，請洽管理者確認"}</div><span class="badge ${x.available?"可申請":"已有申請"}">${esc(x.label)}</span></article>`}).join("")}catch(err){el.innerHTML=`<p class='muted'>無法讀取檔期：${esc(err.message)}</p>`}}
 function renderQueryResult(found){let el=$("#queryResult");el.classList.remove("hide");if(!found){el.innerHTML="<p>查無符合的申請資料，請確認案件編號與 Email 是否正確。</p>";return}el.innerHTML=`<h3>${esc(found.caseNo)}</h3><p><b>狀態：</b><span class="badge ${found.status}">${found.status}</span></p><p><b>使用日期：</b>${esc(found.startDate)} ${esc(found.startTime)}-${esc(found.endTime)}</p><p><b>申請目的：</b>${esc(found.purpose)}</p><p><b>試算 / 核定金額：</b>${money(found.amount)}</p><p><b>審核意見：</b>${esc(found.handlerOpinion||"尚無審核意見")}</p>`}
-function renderPending(){let rows=data.filter(x=>x.status==="待審核").map(itemHtml).join("");$("#pendingList").innerHTML=rows||"<p class='muted'>目前沒有待審核案件。</p>"}
-function renderAdminCalendar(){let f=$("#statusFilter")?.value||"all";$("#adminCalendarList").innerHTML=data.filter(x=>f==="all"||x.status===f).map(itemHtml).join("")||"<p class='muted'>沒有符合條件的案件。</p>"}
-function itemHtml(x){return`<article class="item"><div><b>${esc(x.startDate||"-")}</b><br><span class="muted">${esc(x.startTime||"")}-${esc(x.endTime||"")}</span></div><div><b>${esc(x.caseNo||"")}</b> ${esc(x.purpose||"未命名活動")}<br><span class="muted">${esc(x.unit)}｜${esc(x.applicant)}｜${(x.rooms||[]).map(esc).join("、")}｜${x.people||0}人</span></div><span class="badge ${x.status}">${x.status}</span></article>`}
+function renderPending(){let rows=data.filter(x=>isStatus(x,"待審核")).map(itemHtml).join("");$("#pendingList").innerHTML=rows||"<p class='muted'>目前沒有待審核案件。</p>"}
+function renderAdminCalendar(){let f=$("#statusFilter")?.value||"all";$("#adminCalendarList").innerHTML=data.filter(x=>f==="all"||isStatus(x,f)).map(itemHtml).join("")||"<p class='muted'>沒有符合條件的案件。</p>"}
+function itemHtml(x){let status=normalizeStatus(x.status),rooms=normalizeRooms(x.rooms);return`<article class="item"><div><b>${esc(x.startDate||"-")}</b><br><span class="muted">${esc(x.startTime||"")}-${esc(x.endTime||"")}</span></div><div><b>${esc(x.caseNo||"")}</b> ${esc(x.purpose||"未命名活動")}<br><span class="muted">${esc(x.unit)}｜${esc(x.applicant)}｜${rooms.map(esc).join("、")}｜${x.people||0}人</span></div><span class="badge ${status}">${status}</span></article>`}
 function renderTables(){let head="<tr><th>案件編號</th><th>日期</th><th>單位/申請人</th><th>空間</th><th>時段</th><th>核定金額</th><th>折扣</th><th>狀態</th><th>審核</th></tr>";$("#allHead").innerHTML=head;$("#billingHead").innerHTML=head;let rows=data.map(rowHtml).join("");$("#allRows").innerHTML=rows;$("#billingRows").innerHTML=rows;bindAdminRows()}
-function rowHtml(x){return`<tr><td><b>${esc(x.caseNo||"")}</b></td><td>${esc(x.startDate)}<br><span class="muted">${esc(x.startTime)}-${esc(x.endTime)}</span></td><td><b>${esc(x.unit)}</b><br>${esc(x.applicant)}<br><span class="muted">${esc(x.email)}｜${esc(x.phone)}</span></td><td>${esc(x.rooms||"")}</td><td>${x.periods||0} 時段</td><td>${money(x.amount)}</td><td><select data-discount="${esc(x.caseNo)}">${Object.keys(discountMap).map(d=>`<option ${d===x.discount?"selected":""}>${d}</option>`).join("")}</select></td><td><select data-status="${esc(x.caseNo)}">${["待審核","已核准","需補件","已取消"].map(s=>`<option ${s===x.status?"selected":""}>${s}</option>`).join("")}</select></td><td><textarea data-opinion="${esc(x.caseNo)}" rows="2" placeholder="承辦人/主任審核意見">${esc(x.handlerOpinion||"")}</textarea></td></tr>`}
+function rowHtml(x){let status=normalizeStatus(x.status),rooms=normalizeRooms(x.rooms).join("、");return`<tr><td><b>${esc(x.caseNo||"")}</b></td><td>${esc(x.startDate)}<br><span class="muted">${esc(x.startTime)}-${esc(x.endTime)}</span></td><td><b>${esc(x.unit)}</b><br>${esc(x.applicant)}<br><span class="muted">${esc(x.email)}｜${esc(x.phone)}</span></td><td>${esc(rooms)}</td><td>${x.periods||0} 時段</td><td>${money(x.amount)}</td><td><select data-discount="${esc(x.caseNo)}">${Object.keys(discountMap).map(d=>`<option ${d===x.discount?"selected":""}>${d}</option>`).join("")}</select></td><td><select data-status="${esc(x.caseNo)}">${["待審核","已核准","需補件","已取消"].map(s=>`<option ${s===status?"selected":""}>${s}</option>`).join("")}</select></td><td><textarea data-opinion="${esc(x.caseNo)}" rows="2" placeholder="承辦人/主任審核意見">${esc(x.handlerOpinion||"")}</textarea></td></tr>`}
 function bindAdminRows(){$$("[data-status]").forEach(el=>el.onchange=()=>upd(el.dataset.status,{status:el.value}));$$("[data-discount]").forEach(el=>el.onchange=()=>upd(el.dataset.discount,{discount:el.value}));$$("[data-opinion]").forEach(el=>el.onchange=()=>upd(el.dataset.opinion,{handlerOpinion:el.value}))}
 async function upd(caseNo,patch){try{let res=await api("updateCase",{adminToken,caseNo,...patch});if(!res.ok)throw new Error(res.error||"更新失敗");await refreshAdmin();renderAll();toast("已更新 Google Sheet")}catch(err){toast(err.message)}}
 function money(n){return "NT$ "+Number(n||0).toLocaleString("zh-TW")}
@@ -341,7 +398,7 @@ function fmtDate(d){let z=n=>String(n).padStart(2,"0");return `${d.getFullYear()
 function weekday(d){return ["週日","週一","週二","週三","週四","週五","週六"][d.getDay()]}
 function dateInRange(day,start,end){return day>=(start||"")&&day<=(end||start||"")}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
-function exportCsv(){let rows=[["案件編號","日期","單位","申請人","Email","目的","空間","人數","時段","狀態","折扣","金額","審核意見"],...data.map(x=>[x.caseNo,x.startDate,x.unit,x.applicant,x.email,x.purpose,x.rooms,x.people,x.periods,x.status,x.discount,x.amount,x.handlerOpinion])];let csv="\ufeff"+rows.map(r=>r.map(c=>`"${String(c??"").replaceAll('"','""')}"`).join(",")).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="書田外科訓練教室申請案件.csv";a.click()}
+function exportCsv(){let rows=[["案件編號","日期","單位","申請人","Email","目的","空間","人數","時段","狀態","折扣","金額","審核意見"],...data.map(x=>[x.caseNo,x.startDate,x.unit,x.applicant,x.email,x.purpose,x.rooms,x.people,x.periods,x.status,x.discount,x.amount,x.handlerOpinion])];let csv="\ufeff"+rows.map(r=>r.map(c=>`"${String(c??"").replaceAll('"','""')}"`).join(",")).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="書田外科訓練中心申請案件.csv";a.click()}
 function toast(t){let el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),1800)}
 </script>
 </body>
