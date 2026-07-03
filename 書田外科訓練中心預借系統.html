@@ -1,0 +1,405 @@
+﻿<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>書田外科訓練中心預借系統</title>
+<style>
+:root{--ink:#17212b;--muted:#637487;--line:#d9e3ea;--bg:#f5f7fa;--panel:#fff;--teal:#0e7c7b;--blue:#2f6fbb;--red:#b64444;--green:#27784d;--amber:#a96d10;--side:#102333}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft JhengHei",Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}
+.shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}.side{background:var(--side);color:#fff;padding:22px;display:flex;flex-direction:column;gap:22px}.brand{display:flex;gap:12px;align-items:center}.mark{width:42px;height:42px;border-radius:8px;background:#e8f6f4;color:var(--teal);display:grid;place-items:center;font-weight:900}.brand span,.muted{color:var(--muted);font-size:13px}.side .brand span,.login span{color:#b6c6d5}.nav{display:grid;gap:8px}.nav button,.ghost,.primary,.icon{border:1px solid transparent;border-radius:8px;min-height:40px;padding:0 14px}.nav button{background:transparent;color:#dce8f2;text-align:left}.nav button.active,.nav button:hover{background:#20394d;color:#fff}.nav h3{margin:12px 0 4px;color:#8fb1c9;font-size:12px;letter-spacing:.08em}.login{margin-top:auto;border:1px solid #ffffff24;border-radius:8px;padding:14px;display:grid;gap:10px}
+.main{padding:26px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:20px}.eyebrow{margin:0 0 4px;color:var(--muted);font-size:13px}h1,h2,h3,p{margin-top:0}h1{font-size:28px;margin-bottom:0}h2{font-size:20px;margin-bottom:0}.primary{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}.ghost,.icon{background:#fff;border-color:var(--line);color:var(--ink)}.danger{color:var(--red);border-color:#e7caca}.icon{width:42px;padding:0}.hide{display:none!important}
+.view{display:none}.view.active{display:grid;gap:18px}.hero{position:relative;min-height:230px;border-radius:8px;overflow:hidden;background:linear-gradient(135deg,#d2eef1,#f8fbfb 46%,#214f63)}.hero:before{content:"";position:absolute;inset:auto 0 0;height:95px;background:#10233366}.hero:after{content:"";position:absolute;right:54px;bottom:50px;width:380px;height:78px;border-radius:8px;background:linear-gradient(90deg,#fff,#d9eeee);box-shadow:-90px -34px 0 -10px #ffffffcc,-180px -16px 0 -10px #ffffffcc}.hero div{position:absolute;left:24px;bottom:22px;color:#fff;text-shadow:0 2px 12px #0008}.hero strong{font-size:26px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card,.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px #2030400d}.card{padding:18px}.card span{display:block;color:var(--muted);margin-bottom:8px}.card strong{font-size:26px}.panel{padding:20px}.head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}label,fieldset{display:grid;gap:7px;font-weight:700;color:#354656}input,select,textarea{width:100%;min-height:42px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fff}textarea{resize:vertical}.wide{grid-column:1/-1}.checks{border:1px solid var(--line);border-radius:8px;padding:14px;grid-template-columns:repeat(3,1fr)}.checks label,.agree{display:flex;align-items:center;gap:8px;font-weight:600}.checks input,.agree input{width:auto;min-height:auto}
+.estimate{background:#eef8f7;border:1px solid #c9e7e4;border-radius:8px;padding:14px}.estimate div{display:flex;justify-content:space-between;align-items:center}.estimate strong{font-size:24px;color:var(--teal)}.stepper{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.step-dot{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:8px;padding:10px;text-align:left;font-weight:800}.step-dot.active{background:#e9f8f7;color:var(--teal);border-color:#b8dfdc}.form-step{display:none}.form-step.active{display:grid}.fee-detail{display:grid;gap:8px}.fee-line{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #d6e9e6;padding:7px 0}.fee-line.total{border-bottom:0;font-size:18px;font-weight:900;color:var(--teal)}.notice{border:1px solid #f0d49b;background:#fff8e8;color:#7b520e;border-radius:8px;padding:12px}.summary{display:grid;gap:10px}.summary-row{display:grid;grid-template-columns:150px 1fr;gap:12px;border-bottom:1px solid var(--line);padding:8px 0}
+.list{display:grid;gap:10px}.item{display:grid;grid-template-columns:150px 1fr auto;gap:14px;align-items:center;border-top:1px solid var(--line);padding:12px 0}.item:first-child{border-top:0}.badge{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:800;white-space:nowrap}.待審核{background:#fff5df;color:var(--amber)}.已核准,.可申請{background:#e8f5ed;color:var(--green)}.需補件,.已有申請{background:#eaf1fb;color:var(--blue)}.已取消,.不可申請{background:#faeeee;color:var(--red)}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.info-grid .panel{min-height:150px}.price{display:grid;gap:10px}.price-row{display:grid;grid-template-columns:1fr auto;gap:12px;border-bottom:1px solid var(--line);padding:10px 0}.price-row:last-child{border-bottom:0}.result{border:1px solid var(--line);border-radius:8px;padding:16px;background:#fbfdfe}.result strong{font-size:22px;color:var(--teal)}
+table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}th{background:#f0f5f8}.table{overflow:auto}.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.toast{position:fixed;right:22px;bottom:22px;background:#102333;color:#fff;padding:12px 16px;border-radius:8px;opacity:0;transform:translateY(12px);transition:.2s}.toast.show{opacity:1;transform:none}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.cards,.grid,.checks,.info-grid{grid-template-columns:1fr}.item{grid-template-columns:1fr}.top,.head{align-items:flex-start;flex-direction:column}.hero:after{display:none}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="side">
+  <div class="brand"><div class="mark">ST</div><div><b>書田外科訓練中心</b><span>預借申請系統</span></div></div>
+  <nav class="nav" id="frontNav">
+    <button class="active" data-view="home">首頁</button>
+    <button data-view="venue">場地介紹</button>
+    <button data-view="pricing">收費標準</button>
+    <button data-view="availability">可預約日期</button>
+    <button data-view="apply">我要申請</button>
+    <button data-view="query">查詢申請進度</button>
+  </nav>
+  <nav class="nav hide" id="adminNav">
+    <h3>後台</h3>
+    <button data-view="dashboard">Dashboard</button>
+    <button data-view="pending">待審核案件</button>
+    <button data-view="allCases">所有申請</button>
+    <button data-view="adminCalendar">行事曆</button>
+    <button data-view="billing">收費核定</button>
+    <button data-view="export">匯出 CSV</button>
+    <button data-view="settings">系統設定</button>
+  </nav>
+  <div class="login">
+    <span>目前模式</span>
+    <b id="adminState">申請人前台</b>
+    <button class="ghost" id="adminEntry">後台登入</button>
+  </div>
+</aside>
+<main class="main">
+<header class="top">
+  <div><p class="eyebrow">NYCU Surgery - Shutien Training Room</p><h1>書田外科訓練中心預借系統</h1></div>
+  <div class="actions"><button class="primary" data-view-btn="apply">我要申請</button></div>
+</header>
+
+<section id="home" class="view active">
+  <div class="hero"><div><p>前台申請與進度查詢</p><strong>線上填寫申請、試算費用、保存案件編號</strong></div></div>
+  <section class="panel">
+    <div class="head"><h2>申請流程</h2><button class="ghost" data-view-btn="availability">查看可預約日期</button></div>
+    <div class="info-grid">
+      <div class="panel"><h3>1. 確認日期</h3><p class="muted">先查看日期是否可申請，前台僅揭露可申請狀態，不顯示其他申請資訊。</p></div>
+      <div class="panel"><h3>2. 送出申請</h3><p class="muted">填寫活動資料後，系統會自動建立案件編號。</p></div>
+      <div class="panel"><h3>3. 查詢進度</h3><p class="muted">使用案件編號與 Email 查詢審核狀態與承辦意見。</p></div>
+    </div>
+  </section>
+</section>
+
+<section id="venue" class="view">
+  <section class="panel">
+    <div class="head"><h2>場地介紹</h2><button class="primary" data-view-btn="apply">我要申請</button></div>
+    <div class="info-grid">
+      <div class="panel"><h3>多功能外科指導手術室</h3><p>適合外科訓練、示範教學與分組實作。</p><p class="muted">基本場地費 NT$ 15,000 / 時段</p></div>
+      <div class="panel"><h3>419 教室</h3><p>適合中型課程、術前說明與教學活動。</p><p class="muted">基本場地費 NT$ 12,000 / 時段</p></div>
+      <div class="panel"><h3>420 教室</h3><p>適合小型討論、工作坊與行政會議。</p><p class="muted">基本場地費 NT$ 9,000 / 時段</p></div>
+    </div>
+  </section>
+</section>
+
+<section id="pricing" class="view">
+  <section class="panel">
+    <div class="head"><h2>收費標準</h2><span class="muted">實際核定金額以後台審核為準</span></div>
+    <div class="grid">
+      <div class="panel price">
+        <h3>場地費</h3>
+        <div class="price-row"><span>多功能外科指導手術室</span><b>NT$ 15,000 / 時段</b></div>
+        <div class="price-row"><span>419 教室</span><b>NT$ 12,000 / 時段</b></div>
+        <div class="price-row"><span>420 教室</span><b>NT$ 9,000 / 時段</b></div>
+      </div>
+      <div class="panel price">
+        <h3>加選項目</h3>
+        <div class="price-row"><span>防護耗材</span><b>NT$ 800 / 人</b></div>
+        <div class="price-row"><span>麻醉</span><b>NT$ 2,500 / 隻</b></div>
+        <div class="price-row"><span>氣體使用</span><b>NT$ 3,000 / 隻</b></div>
+        <div class="price-row"><span>場地設定</span><b>NT$ 1,000 / 時段</b></div>
+        <div class="price-row"><span>值班人員</span><b>NT$ 4,000 / 時段</b></div>
+      </div>
+    </div>
+  </section>
+</section>
+
+<section id="availability" class="view">
+  <section class="panel">
+    <div class="head"><h2>可預約日期</h2><span class="muted">僅顯示日期是否可申請</span></div>
+    <div class="actions">
+      <label>起始日期<input type="date" id="availabilityStart"></label>
+      <label>顯示天數<select id="availabilityDays"><option>14</option><option>30</option><option>60</option></select></label>
+    </div>
+    <div id="availabilityList" class="list"></div>
+  </section>
+</section>
+
+<section id="apply" class="view">
+<section class="panel">
+<div class="head"><h2>我要申請</h2><span class="muted">請依四個步驟完成預借申請</span></div>
+<div class="stepper" id="applyStepper">
+  <div class="step-dot active" data-step-dot="1">Step 1<br><span class="muted">基本資料</span></div>
+  <div class="step-dot" data-step-dot="2">Step 2<br><span class="muted">借用資訊</span></div>
+  <div class="step-dot" data-step-dot="3">Step 3<br><span class="muted">加選與費用</span></div>
+  <div class="step-dot" data-step-dot="4">Step 4<br><span class="muted">確認送出</span></div>
+</div>
+<form id="form" class="grid">
+<input type="hidden" name="applyDate">
+<input type="hidden" name="attachments" value="將另附核准公文與活動議程">
+<section class="form-step active wide grid" data-step="1">
+  <label>申請單位類別<select name="unitType"><option>校內單位</option><option>校外單位</option></select></label>
+  <label>申請單位<input name="unit" required placeholder="請填寫單位名稱"></label>
+  <label>申請人<input name="applicant" required></label>
+  <label>E-mail<input type="email" name="email" required></label>
+  <label>聯絡電話<input name="phone" required></label>
+  <label class="wide">申請目的<textarea name="purpose" rows="3" required></textarea></label>
+  <div class="actions wide"><button type="button" class="primary" data-next-step>下一步</button></div>
+</section>
+<section class="form-step wide grid" data-step="2">
+  <label>使用開始日期<input type="date" name="startDate" required></label>
+  <label>使用結束日期<input type="date" name="endDate" required></label>
+  <label>開始時間<input type="time" name="startTime" value="08:00" required></label>
+  <label>結束時間<input type="time" name="endTime" value="12:00" required></label>
+  <fieldset class="wide checks"><legend>使用空間</legend><label><input type="checkbox" name="rooms" value="多功能外科指導手術室">多功能外科指導手術室</label><label><input type="checkbox" name="rooms" value="419教室">419教室</label><label><input type="checkbox" name="rooms" value="420教室">420教室</label></fieldset>
+  <label>預估人數<input type="number" name="people" min="1" value="20"></label>
+  <label>使用時段<input type="number" name="periods" min="1" value="1"></label>
+  <label>是否假日/夜間或超出 08:00–17:00<select name="offHours"><option value="no">否</option><option value="yes">是，需要事前申請</option></select></label>
+  <fieldset class="wide checks"><legend>參與對象</legend><label><input type="checkbox" name="audience" value="本校學生">本校學生</label><label><input type="checkbox" name="audience" value="校外人士">校外人士</label></fieldset>
+  <div class="notice wide hide" id="offHoursNotice">超出平日 08:00–17:00 之使用需求，須事先申請，並依實際使用時間加收工作人員值班費。</div>
+  <div class="actions wide"><button type="button" class="ghost" data-prev-step>上一步</button><button type="button" class="primary" data-next-step>下一步</button></div>
+</section>
+<section class="form-step wide grid" data-step="3">
+  <fieldset class="wide checks"><legend>加選項目</legend><label><input type="checkbox" name="extras" value="protective">防護耗材</label><label><input type="checkbox" name="extras" value="anesthesia">麻醉</label><label><input type="checkbox" name="extras" value="gas">麻醉氣體</label></fieldset>
+  <fieldset class="wide checks"><legend>動物需求</legend><label><input type="radio" name="animalNeed" value="不需要" checked>不需要</label><label><input type="radio" name="animalNeed" value="需要">需要</label><label>種類<input name="animalType"></label><label>數量<input type="number" name="animalCount" min="0" value="0"></label><label>重量<input name="animalWeight"></label></fieldset>
+  <label class="wide">備註<textarea name="note" rows="3" placeholder="請補充特殊需求、設備或注意事項"></textarea></label>
+  <div class="estimate wide"><div><span>費用明細</span><strong id="estimate">NT$ 0</strong></div><div id="feeDetail" class="fee-detail"></div><span class="muted">清潔費與手術室場地設定費會依使用空間自動計算；值班費第一版先提醒，後台再依實際使用時間核定。</span></div>
+  <div class="actions wide"><button type="button" class="ghost" data-prev-step>上一步</button><button type="button" class="primary" data-next-step>下一步</button></div>
+</section>
+<section class="form-step wide grid" data-step="4">
+  <div class="result wide"><h3>申請摘要</h3><div id="applicationSummary" class="summary"></div></div>
+  <div class="estimate wide"><div><span>確認費用明細</span><strong id="finalEstimate">NT$ 0</strong></div><div id="finalFeeDetail" class="fee-detail"></div></div>
+  <label class="agree wide"><input type="checkbox" required>我已詳讀租借辦法以及注意事項，並同意送出申請。</label>
+  <div class="actions wide"><button type="button" class="ghost" data-prev-step>上一步</button><button type="reset" class="ghost">清除</button><button class="primary">送出申請</button></div>
+</section>
+</form>
+</section>
+</section>
+
+<section id="query" class="view">
+  <section class="panel">
+    <div class="head"><h2>查詢申請進度</h2><span class="muted">請輸入案件編號與申請 Email</span></div>
+    <form id="queryForm" class="grid">
+      <label>案件編號<input name="caseNo" required placeholder="ST-20260703-001"></label>
+      <label>Email<input type="email" name="email" required placeholder="name@example.com"></label>
+      <div class="actions wide"><button class="primary">查詢</button></div>
+    </form>
+    <div id="queryResult" class="result hide"></div>
+  </section>
+</section>
+
+<section id="loginView" class="view">
+  <section id="loginPanel" class="panel">
+    <h2>後台登入</h2><p class="muted">示範帳號：admin，密碼：shutien115</p>
+    <div class="actions"><input id="user" placeholder="帳號"><input id="pass" type="password" placeholder="密碼"><button id="loginBtn" class="primary">登入</button></div>
+  </section>
+</section>
+
+<section id="dashboard" class="view admin-view">
+  <section class="panel">
+    <div class="head"><h2>Dashboard</h2><span class="muted">後台統計資訊</span></div>
+    <div class="cards">
+      <div class="card"><span>總申請</span><strong id="mTotal">0</strong></div>
+      <div class="card"><span>待審核</span><strong id="mPending">0</strong></div>
+      <div class="card"><span>已核准</span><strong id="mApproved">0</strong></div>
+      <div class="card"><span>核定金額</span><strong id="mMoney">NT$ 0</strong></div>
+    </div>
+  </section>
+</section>
+
+<section id="pending" class="view admin-view">
+  <section class="panel"><div class="head"><h2>待審核案件</h2></div><div id="pendingList" class="list"></div></section>
+</section>
+
+<section id="allCases" class="view admin-view">
+  <section class="panel"><div class="head"><h2>所有申請</h2></div><div class="table"><table><thead id="allHead"></thead><tbody id="allRows"></tbody></table></div></section>
+</section>
+
+<section id="adminCalendar" class="view admin-view">
+  <section class="panel"><div class="head"><h2>行事曆</h2><select id="statusFilter"><option value="all">全部</option><option>待審核</option><option>已核准</option><option>需補件</option><option>已取消</option></select></div><div id="adminCalendarList" class="list"></div></section>
+</section>
+
+<section id="billing" class="view admin-view">
+  <section class="panel"><div class="head"><h2>收費核定</h2><span class="muted">可調整折扣與審核狀態</span></div><div class="table"><table><thead id="billingHead"></thead><tbody id="billingRows"></tbody></table></div></section>
+</section>
+
+<section id="export" class="view admin-view">
+  <section class="panel">
+    <div class="head"><h2>匯出 CSV</h2><button id="exportBtn" class="primary">下載 CSV</button></div>
+    <p class="muted">匯出內容包含所有申請案件與後台核定資料。</p>
+  </section>
+</section>
+
+<section id="settings" class="view admin-view">
+  <section class="panel">
+    <div class="head"><h2>系統設定</h2><button id="logoutBtn" class="ghost">登出後台</button></div>
+    <div class="actions"><button class="ghost danger" id="resetDemo">重置示範資料</button></div>
+  </section>
+</section>
+</main>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const API_URL="https://script.google.com/macros/s/AKfycbwqfpeOkiuMcwpqoA7s0eCl4mnf9nuy7yUYiUChCRaACzlqM-sy2bunQoqPdjZvDcZNDA/exec";
+const AK="shutien-admin-v1",TK="shutien-admin-token-v1";
+const roomRate={"多功能外科指導手術室":15000,"419教室":12000,"420教室":9000};
+const cleaning={"多功能外科指導手術室":5000,"419教室":2000,"420教室":1000};
+const discountMap={"全額收取":1,"場地費全免":0,"酌收30%":.3,"酌收50%":.5,"酌收70%":.7,"酌收80%":.8};
+let admin=sessionStorage.getItem(AK)==="1";
+let adminToken=sessionStorage.getItem(TK)||"";
+let data=[];
+let applyStep=1;
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+document.addEventListener("DOMContentLoaded",async()=>{bind();initDefaults();renderShell();await renderAvailability();if(admin){await refreshAdmin();show("dashboard")}else show("home");});
+function bind(){
+ $$(".nav button,[data-view-btn]").forEach(b=>b.onclick=()=>show(b.dataset.view||b.dataset.viewBtn));
+ $("#adminEntry").onclick=()=>show(admin?"dashboard":"loginView");
+ $("#form").oninput=updateApplicationReview;
+ $("#form").onsubmit=submitApplication;
+ $("#form").onreset=()=>setTimeout(()=>{applyStep=1;showApplyStep();updateApplicationReview()},0);
+ $$("[data-next-step]").forEach(b=>b.onclick=()=>goApplyStep(1));
+ $$("[data-prev-step]").forEach(b=>b.onclick=()=>goApplyStep(-1));
+ $("#queryForm").onsubmit=queryApplication;
+ $("#loginBtn").onclick=loginAdmin;
+ $("#logoutBtn").onclick=()=>{admin=false;adminToken="";sessionStorage.removeItem(AK);sessionStorage.removeItem(TK);data=[];renderShell();show("home");toast("已登出後台")};
+ $("#statusFilter").onchange=renderAdminCalendar;
+ $("#exportBtn").onclick=exportCsv;
+ $("#resetDemo").onclick=()=>toast("正式資料已改由 Google Sheet 管理，請至試算表調整資料。");
+ $("#availabilityStart").onchange=renderAvailability;
+ $("#availabilityDays").onchange=renderAvailability;
+}
+function initDefaults(){let d=today();$$('input[name="applyDate"],#availabilityStart').forEach(el=>{if(!el.value)el.value=d});showApplyStep();updateApplicationReview()}
+async function show(id){if(isAdminView(id)&&!admin)id="loginView";$$(".view").forEach(v=>v.classList.toggle("active",v.id===id));$$(".nav button").forEach(b=>b.classList.toggle("active",(b.dataset.view||b.dataset.viewBtn)===id));renderShell();if(id==="availability")await renderAvailability();if(isAdminView(id)){await refreshAdmin();renderAll()}}
+function isAdminView(id){return ["dashboard","pending","allCases","adminCalendar","billing","export","settings"].includes(id)}
+function formData(){let f=new FormData($("#form"));let x={unitType:f.get("unitType"),unit:f.get("unit"),applicant:f.get("applicant"),applyDate:f.get("applyDate")||today(),email:f.get("email"),phone:f.get("phone"),purpose:f.get("purpose"),audience:f.getAll("audience"),people:+f.get("people")||0,startDate:f.get("startDate"),endDate:f.get("endDate"),startTime:f.get("startTime"),endTime:f.get("endTime"),periods:+f.get("periods")||1,offHours:f.get("offHours"),animalNeed:f.get("animalNeed"),animalType:f.get("animalType"),animalCount:+f.get("animalCount")||0,animalWeight:f.get("animalWeight"),rooms:f.getAll("rooms"),extras:f.getAll("extras"),attachments:f.get("attachments"),note:f.get("note")};let c=calc(x);x.estimatedAmount=c.total;x.offHoursNotice=needsDutyNotice(x);return x}
+function calc(x){
+ let periods=x.periods||1, people=x.people||0, animals=x.animalCount||0;
+ let base=(x.rooms||[]).reduce((s,r)=>s+(roomRate[r]||0)*periods,0);
+ let protective=x.extras?.includes("protective")?800*people:0;
+ let anesthesia=x.extras?.includes("anesthesia")?2500*animals:0;
+ let gas=x.extras?.includes("gas")?3000*animals:0;
+ let setup=(x.rooms||[]).includes("多功能外科指導手術室")?1000*periods:0;
+ let clean=(x.rooms||[]).reduce((s,r)=>s+(cleaning[r]||0),0);
+ let rate=discountMap[x.discount||"全額收取"]??1;
+ let details=[
+  ["場地費",Math.round(base*rate)],
+  ["防護耗材費",protective],
+  ["麻醉費",anesthesia],
+  ["麻醉氣體費",gas],
+  ["場地設定費",setup],
+  ["清潔費",clean]
+ ];
+ return{base,extra:protective+anesthesia+gas+setup+clean,total:Math.round(base*rate+protective+anesthesia+gas+setup+clean),details};
+}
+function goApplyStep(delta){if(delta>0&&!validateCurrentStep())return;applyStep=Math.max(1,Math.min(4,applyStep+delta));showApplyStep();updateApplicationReview()}
+function validateCurrentStep(){let fields=$$(`.form-step[data-step="${applyStep}"] input,.form-step[data-step="${applyStep}"] select,.form-step[data-step="${applyStep}"] textarea`).filter(el=>!el.disabled&&el.type!=="hidden");for(let el of fields){if(!el.checkValidity()){el.reportValidity();return false}}if(applyStep===2&&formData().rooms.length===0){toast("請至少選擇一個使用空間");return false}return true}
+function showApplyStep(){$$(".form-step").forEach(s=>s.classList.toggle("active",s.dataset.step==applyStep));$$("[data-step-dot]").forEach(s=>s.classList.toggle("active",s.dataset.stepDot==applyStep))}
+function needsDutyNotice(x){let start=toMinutes(x.startTime||"08:00"),end=toMinutes(x.endTime||"17:00");return x.offHours==="yes"||start<480||end>1020}
+function toMinutes(t){let [h,m]=String(t||"00:00").split(":").map(Number);return (h||0)*60+(m||0)}
+function updateApplicationReview(){let x=formData(),c=calc(x);$("#estimate").textContent=money(c.total);$("#finalEstimate").textContent=money(c.total);renderFeeDetail("#feeDetail",c);renderFeeDetail("#finalFeeDetail",c);$("#offHoursNotice").classList.toggle("hide",!needsDutyNotice(x));renderApplicationSummary(x)}
+function renderFeeDetail(target,c){let el=$(target);if(!el)return;el.innerHTML=c.details.map(([name,value])=>`<div class="fee-line"><span>${name}</span><b>${money(value)}</b></div>`).join("")+`<div class="fee-line total"><span>預估總計</span><b>${money(c.total)}</b></div>`}
+function renderApplicationSummary(x){let el=$("#applicationSummary");if(!el)return;let warning=needsDutyNotice(x)?"<div class='notice'>超出平日 08:00–17:00 之使用需求，須事先申請，並依實際使用時間加收工作人員值班費。</div>":"";el.innerHTML=[
+ ["申請單位",`${x.unitType||""} ${esc(x.unit||"")}`],
+ ["申請人",`${esc(x.applicant||"")} / ${esc(x.email||"")} / ${esc(x.phone||"")}`],
+ ["申請目的",esc(x.purpose||"")],
+ ["使用日期",`${esc(x.startDate||"")} 至 ${esc(x.endDate||"")}`],
+ ["使用時間",`${esc(x.startTime||"")} - ${esc(x.endTime||"")}，${x.periods||1} 時段`],
+ ["使用空間",(x.rooms||[]).map(esc).join("、")||"未選擇"],
+ ["預估人數",`${x.people||0} 人`],
+ ["加選項目",extraLabels(x).join("、")||"無"],
+ ["動物需求",x.animalNeed==="需要"?`${esc(x.animalType||"未填種類")}，${x.animalCount||0} 隻，${esc(x.animalWeight||"未填重量")}`:"不需要"],
+ ["備註",esc(x.note||"無")]
+].map(([k,v])=>`<div class="summary-row"><b>${k}</b><span>${v}</span></div>`).join("")+warning}
+function extraLabels(x){let labels=[];if(x.extras?.includes("protective"))labels.push("防護耗材");if(x.extras?.includes("anesthesia"))labels.push("麻醉");if(x.extras?.includes("gas"))labels.push("麻醉氣體");return labels}
+async function api(action,payload={}){
+ let res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...payload})});
+ let text=await res.text();
+ try{return JSON.parse(text)}catch(err){throw new Error("API 回傳格式不是 JSON，請確認 Apps Script 部署權限。")}
+}
+async function submitApplication(e){
+ e.preventDefault();
+ let btn=e.submitter;
+ if(btn)btn.disabled=true;
+ try{
+  let x=formData();
+  let res=await api("submitApplication",{application:x});
+  if(!res.ok)throw new Error(res.error||"申請送出失敗");
+  e.target.reset();
+  applyStep=1;
+  showApplyStep();
+  updateApplicationReview();
+  show("query");
+  $("#queryResult").classList.remove("hide");
+  $("#queryResult").innerHTML=`<h3>✅ 申請已送出</h3><p>案件編號：<strong>${esc(res.caseNo)}</strong></p><p class="muted">請保存案件編號，後續可搭配 Email 查詢申請進度。</p><p class="muted">預計 3–5 個工作天內完成審核。</p>`;
+  await renderAvailability();
+  toast("申請已送出");
+ }catch(err){
+  toast(err.message);
+ }finally{
+  if(btn)btn.disabled=false;
+ }
+}
+async function queryApplication(e){
+ e.preventDefault();
+ let f=new FormData(e.target);
+ let el=$("#queryResult");
+ el.classList.remove("hide");
+ el.innerHTML="<p class='muted'>查詢中...</p>";
+ try{
+  let res=await api("queryStatus",{caseNo:f.get("caseNo"),email:f.get("email")});
+  if(!res.ok){renderQueryResult(null);return}
+  renderQueryResult(res.case);
+ }catch(err){
+  el.innerHTML=`<p>查詢失敗：${esc(err.message)}</p>`;
+ }
+}
+async function loginAdmin(){
+ let user=$("#user").value.trim(),token=$("#pass").value.trim();
+ if(user!=="admin"||!token){toast("請輸入後台帳號與管理密鑰");return}
+ try{
+  let res=await api("listCases",{adminToken:token,status:"all"});
+  if(!res.ok)throw new Error(res.error||"後台登入失敗");
+  admin=true;
+  adminToken=token;
+  sessionStorage.setItem(AK,"1");
+  sessionStorage.setItem(TK,token);
+  data=normalizeCases(res.cases||[]);
+  renderAll();
+  show("dashboard");
+  toast("已登入後台");
+ }catch(err){
+  toast(err.message);
+ }
+}
+async function refreshAdmin(){
+ if(!admin||!adminToken)return;
+ try{
+  let res=await api("listCases",{adminToken,status:"all"});
+  if(!res.ok)throw new Error(res.error||"讀取案件失敗");
+  data=normalizeCases(res.cases||[]);
+ }catch(err){
+  toast(err.message);
+ }
+}
+function normalizeCases(cases){
+ return cases.map(x=>({
+  ...x,
+  id:x.caseNo,
+  status:normalizeStatus(x.status),
+  rooms:normalizeRooms(x.rooms),
+  amount:+x.amount||0,
+  people:+x.people||0,
+  periods:+x.periods||0
+ }));
+}
+function normalizeStatus(status){let s=String(status||"待審核").trim();if(s.includes("核准"))return"已核准";if(s.includes("補件"))return"需補件";if(s.includes("取消"))return"已取消";if(s.includes("待")||s.includes("審"))return"待審核";return s}
+function normalizeRooms(rooms){if(Array.isArray(rooms))return rooms;if(!rooms)return[];return String(rooms).split(/[、,，/｜|]/).map(s=>s.trim()).filter(Boolean)}
+function isStatus(x,status){return normalizeStatus(x.status)===status}
+function renderAll(){renderShell();renderMetrics();renderPending();renderAdminCalendar();renderTables()}
+function renderShell(){$("#frontNav").classList.toggle("hide",admin);$("#adminNav").classList.toggle("hide",!admin);$("#adminState").textContent=admin?"後台管理者":"申請人前台";$("#adminEntry").textContent=admin?"回到 Dashboard":"後台登入"}
+function renderMetrics(){let approved=data.filter(x=>isStatus(x,"已核准"));$("#mTotal").textContent=data.length;$("#mPending").textContent=data.filter(x=>isStatus(x,"待審核")).length;$("#mApproved").textContent=approved.length;$("#mMoney").textContent=money(approved.reduce((s,x)=>s+(+x.amount||0),0))}
+async function renderAvailability(){let el=$("#availabilityList");if(!el)return;let start=$("#availabilityStart")?.value||today(),days=+($("#availabilityDays")?.value||14);el.innerHTML="<p class='muted'>讀取可預約日期中...</p>";try{let res=await api("availability",{startDate:start,days});if(!res.ok)throw new Error(res.error||"讀取失敗");el.innerHTML=(res.dates||[]).map(x=>{let d=new Date(x.date+"T00:00:00");return`<article class="item"><div><b>${esc(x.date)}</b><br><span class="muted">${weekday(d)}</span></div><div>${x.available?"目前可提出申請":"已有申請，請洽管理者確認"}</div><span class="badge ${x.available?"可申請":"已有申請"}">${esc(x.label)}</span></article>`}).join("")}catch(err){el.innerHTML=`<p class='muted'>無法讀取檔期：${esc(err.message)}</p>`}}
+function renderQueryResult(found){let el=$("#queryResult");el.classList.remove("hide");if(!found){el.innerHTML="<p>查無符合的申請資料，請確認案件編號與 Email 是否正確。</p>";return}el.innerHTML=`<h3>${esc(found.caseNo)}</h3><p><b>狀態：</b><span class="badge ${found.status}">${found.status}</span></p><p><b>使用日期：</b>${esc(found.startDate)} ${esc(found.startTime)}-${esc(found.endTime)}</p><p><b>申請目的：</b>${esc(found.purpose)}</p><p><b>試算 / 核定金額：</b>${money(found.amount)}</p><p><b>審核意見：</b>${esc(found.handlerOpinion||"尚無審核意見")}</p>`}
+function renderPending(){let rows=data.filter(x=>isStatus(x,"待審核")).map(itemHtml).join("");$("#pendingList").innerHTML=rows||"<p class='muted'>目前沒有待審核案件。</p>"}
+function renderAdminCalendar(){let f=$("#statusFilter")?.value||"all";$("#adminCalendarList").innerHTML=data.filter(x=>f==="all"||isStatus(x,f)).map(itemHtml).join("")||"<p class='muted'>沒有符合條件的案件。</p>"}
+function itemHtml(x){let status=normalizeStatus(x.status),rooms=normalizeRooms(x.rooms);return`<article class="item"><div><b>${esc(x.startDate||"-")}</b><br><span class="muted">${esc(x.startTime||"")}-${esc(x.endTime||"")}</span></div><div><b>${esc(x.caseNo||"")}</b> ${esc(x.purpose||"未命名活動")}<br><span class="muted">${esc(x.unit)}｜${esc(x.applicant)}｜${rooms.map(esc).join("、")}｜${x.people||0}人</span></div><span class="badge ${status}">${status}</span></article>`}
+function renderTables(){let head="<tr><th>案件編號</th><th>日期</th><th>單位/申請人</th><th>空間</th><th>時段</th><th>核定金額</th><th>折扣</th><th>狀態</th><th>審核</th></tr>";$("#allHead").innerHTML=head;$("#billingHead").innerHTML=head;let rows=data.map(rowHtml).join("");$("#allRows").innerHTML=rows;$("#billingRows").innerHTML=rows;bindAdminRows()}
+function rowHtml(x){let status=normalizeStatus(x.status),rooms=normalizeRooms(x.rooms).join("、");return`<tr><td><b>${esc(x.caseNo||"")}</b></td><td>${esc(x.startDate)}<br><span class="muted">${esc(x.startTime)}-${esc(x.endTime)}</span></td><td><b>${esc(x.unit)}</b><br>${esc(x.applicant)}<br><span class="muted">${esc(x.email)}｜${esc(x.phone)}</span></td><td>${esc(rooms)}</td><td>${x.periods||0} 時段</td><td>${money(x.amount)}</td><td><select data-discount="${esc(x.caseNo)}">${Object.keys(discountMap).map(d=>`<option ${d===x.discount?"selected":""}>${d}</option>`).join("")}</select></td><td><select data-status="${esc(x.caseNo)}">${["待審核","已核准","需補件","已取消"].map(s=>`<option ${s===status?"selected":""}>${s}</option>`).join("")}</select></td><td><textarea data-opinion="${esc(x.caseNo)}" rows="2" placeholder="承辦人/主任審核意見">${esc(x.handlerOpinion||"")}</textarea></td></tr>`}
+function bindAdminRows(){$$("[data-status]").forEach(el=>el.onchange=()=>upd(el.dataset.status,{status:el.value}));$$("[data-discount]").forEach(el=>el.onchange=()=>upd(el.dataset.discount,{discount:el.value}));$$("[data-opinion]").forEach(el=>el.onchange=()=>upd(el.dataset.opinion,{handlerOpinion:el.value}))}
+async function upd(caseNo,patch){try{let res=await api("updateCase",{adminToken,caseNo,...patch});if(!res.ok)throw new Error(res.error||"更新失敗");await refreshAdmin();renderAll();toast("已更新 Google Sheet")}catch(err){toast(err.message)}}
+function money(n){return "NT$ "+Number(n||0).toLocaleString("zh-TW")}
+function today(){return fmtDate(new Date())}
+function fmtDate(d){let z=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`}
+function weekday(d){return ["週日","週一","週二","週三","週四","週五","週六"][d.getDay()]}
+function dateInRange(day,start,end){return day>=(start||"")&&day<=(end||start||"")}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function exportCsv(){let rows=[["案件編號","日期","單位","申請人","Email","目的","空間","人數","時段","狀態","折扣","金額","審核意見"],...data.map(x=>[x.caseNo,x.startDate,x.unit,x.applicant,x.email,x.purpose,x.rooms,x.people,x.periods,x.status,x.discount,x.amount,x.handlerOpinion])];let csv="\ufeff"+rows.map(r=>r.map(c=>`"${String(c??"").replaceAll('"','""')}"`).join(",")).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="書田外科訓練中心申請案件.csv";a.click()}
+function toast(t){let el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),1800)}
+</script>
+</body>
+</html>
