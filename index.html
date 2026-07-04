@@ -13,7 +13,7 @@
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card,.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px #2030400d}.card{padding:18px}.card span{display:block;color:var(--muted);margin-bottom:8px}.card strong{font-size:26px}.panel{padding:20px}.head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}label,fieldset{display:grid;gap:7px;font-weight:700;color:#354656}input,select,textarea{width:100%;min-height:42px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fff}textarea{resize:vertical}.wide{grid-column:1/-1}.checks{border:1px solid var(--line);border-radius:8px;padding:14px;grid-template-columns:repeat(3,1fr)}.checks label,.agree{display:flex;align-items:center;gap:8px;font-weight:600}.checks input,.agree input{width:auto;min-height:auto}
 .estimate{background:#eef8f7;border:1px solid #c9e7e4;border-radius:8px;padding:14px}.estimate div{display:flex;justify-content:space-between;align-items:center}.estimate strong{font-size:24px;color:var(--teal)}.stepper{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.step-dot{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:8px;padding:10px;text-align:left;font-weight:800}.step-dot.active{background:#e9f8f7;color:var(--teal);border-color:#b8dfdc}.form-step{display:none}.form-step.active{display:grid}.fee-detail{display:grid;gap:8px}.fee-line{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #d6e9e6;padding:7px 0}.fee-line.total{border-bottom:0;font-size:18px;font-weight:900;color:var(--teal)}.notice{border:1px solid #f0d49b;background:#fff8e8;color:#7b520e;border-radius:8px;padding:12px}.summary{display:grid;gap:10px}.summary-row{display:grid;grid-template-columns:150px 1fr;gap:12px;border-bottom:1px solid var(--line);padding:8px 0}.review-center{display:grid;grid-template-columns:320px minmax(0,1fr);gap:16px}.case-list{display:grid;gap:8px;max-height:72vh;overflow:auto;padding-right:4px}.case-card{border:1px solid var(--line);background:#fff;border-radius:8px;padding:12px;text-align:left;display:grid;gap:6px}.case-card.active{border-color:var(--teal);box-shadow:0 0 0 3px #0e7c7b1a}.case-card strong{font-size:15px}.case-meta{color:var(--muted);font-size:13px;line-height:1.45}.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.detail-section{border:1px solid var(--line);border-radius:8px;padding:14px;background:#fbfdfe}.detail-section h3{font-size:16px;margin-bottom:10px}.kv{display:grid;grid-template-columns:120px 1fr;gap:8px;border-bottom:1px solid var(--line);padding:7px 0}.kv:last-child{border-bottom:0}.timeline{display:grid;gap:8px}.stage{display:flex;align-items:center;gap:8px;color:var(--muted)}.stage:before{content:"";width:10px;height:10px;border-radius:50%;background:#c8d6dc}.stage.active{color:var(--teal);font-weight:800}.stage.active:before{background:var(--teal)}.admin-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.list{display:grid;gap:10px}.item{display:grid;grid-template-columns:150px 1fr auto;gap:14px;align-items:center;border-top:1px solid var(--line);padding:12px 0}.item:first-child{border-top:0}.badge{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:800;white-space:nowrap}.待審核{background:#fff5df;color:var(--amber)}.已核准,.可申請{background:#e8f5ed;color:var(--green)}.需補件,.已有申請{background:#eaf1fb;color:var(--blue)}.已取消,.不可申請{background:#faeeee;color:var(--red)}
+.list{display:grid;gap:10px}.item{display:grid;grid-template-columns:150px 1fr auto;gap:14px;align-items:center;border-top:1px solid var(--line);padding:12px 0}.item:first-child{border-top:0}.badge{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:800;white-space:nowrap}.已送件,.承辦審核中,.補件完成{background:#fff5df;color:var(--amber)}.主任核准,.待繳費,.已繳費,.活動完成,.已結案,.可申請{background:#e8f5ed;color:var(--green)}.待補件,.已有申請{background:#eaf1fb;color:var(--blue)}.主任退件,.不可申請{background:#faeeee;color:var(--red)}
 .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.info-grid .panel{min-height:150px}.price{display:grid;gap:10px}.price-row{display:grid;grid-template-columns:1fr auto;gap:12px;border-bottom:1px solid var(--line);padding:10px 0}.price-row:last-child{border-bottom:0}.result{border:1px solid var(--line);border-radius:8px;padding:16px;background:#fbfdfe}.result strong{font-size:22px;color:var(--teal)}
 table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}th{background:#f0f5f8}.table{overflow:auto}.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.toast{position:fixed;right:22px;bottom:22px;background:#102333;color:#fff;padding:12px 16px;border-radius:8px;opacity:0;transform:translateY(12px);transition:.2s}.toast.show{opacity:1;transform:none}
 @media(max-width:900px){.shell{grid-template-columns:1fr}.cards,.grid,.checks,.info-grid,.review-center,.detail-grid{grid-template-columns:1fr}.item{grid-template-columns:1fr}.top,.head{align-items:flex-start;flex-direction:column}.hero:after{display:none}}
@@ -34,7 +34,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
   <nav class="nav hide" id="adminNav">
     <h3>後台</h3>
     <button data-view="dashboard">Dashboard</button>
-    <button data-view="pending">待審核案件</button>
+    <button data-view="pending">待處理案件</button>
     <button data-view="allCases">所有申請</button>
     <button data-view="adminCalendar">行事曆</button>
     <button data-view="billing">收費核定</button>
@@ -176,15 +176,15 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
     <div class="head"><h2>Dashboard</h2><span class="muted">後台統計資訊</span></div>
     <div class="cards">
       <div class="card"><span>總申請</span><strong id="mTotal">0</strong></div>
-      <div class="card"><span>待審核</span><strong id="mPending">0</strong></div>
-      <div class="card"><span>已核准</span><strong id="mApproved">0</strong></div>
+      <div class="card"><span>待處理</span><strong id="mPending">0</strong></div>
+      <div class="card"><span>核准後案件</span><strong id="mApproved">0</strong></div>
       <div class="card"><span>核定金額</span><strong id="mMoney">NT$ 0</strong></div>
     </div>
   </section>
 </section>
 
 <section id="pending" class="view admin-view">
-  <section class="panel"><div class="head"><h2>待審核案件</h2></div><div id="pendingList" class="list"></div></section>
+  <section class="panel"><div class="head"><h2>待處理案件</h2></div><div id="pendingList" class="list"></div></section>
 </section>
 
 <section id="allCases" class="view admin-view">
@@ -203,7 +203,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
 </section>
 
 <section id="adminCalendar" class="view admin-view">
-  <section class="panel"><div class="head"><h2>行事曆</h2><select id="statusFilter"><option value="all">全部</option><option>待審核</option><option>已核准</option><option>需補件</option><option>已取消</option></select></div><div id="adminCalendarList" class="list"></div></section>
+  <section class="panel"><div class="head"><h2>行事曆</h2><select id="statusFilter"><option value="all">全部</option><option>已送件</option><option>承辦審核中</option><option>待補件</option><option>補件完成</option><option>主任核准</option><option>待繳費</option><option>已繳費</option><option>活動完成</option><option>主任退件</option><option>已結案</option></select></div><div id="adminCalendarList" class="list"></div></section>
 </section>
 
 <section id="billing" class="view admin-view">
@@ -252,6 +252,20 @@ const defaultSettings={
  fees:{protective:800,anesthesia:2500,gas:3000,setup:1000}
 };
 const discountMap={"全額收取":1,"場地費全免":0,"酌收30%":.3,"酌收50%":.5,"酌收70%":.7,"酌收80%":.8};
+const workflowTransitions={
+ "已送件":["承辦審核中"],
+ "承辦審核中":["待補件","主任核准","主任退件"],
+ "待補件":["補件完成"],
+ "補件完成":["承辦審核中"],
+ "主任核准":["待繳費"],
+ "待繳費":["已繳費"],
+ "已繳費":["活動完成"],
+ "活動完成":["已結案"],
+ "主任退件":["已結案"],
+ "已結案":[]
+};
+const workflowLabels={"承辦審核中":"開始承辦審核","待補件":"待補件","補件完成":"補件完成","主任核准":"主任核准","主任退件":"退件","待繳費":"通知繳費","已繳費":"確認已繳費","活動完成":"活動完成","已結案":"案件結案"};
+const checklistItems=["已確認場地","已通知申請人","已收到繳費","已建立行事曆","已完成場地準備"];
 let systemSettings=loadSettings();
 let admin=sessionStorage.getItem(AK)==="1";
 let adminToken=sessionStorage.getItem(TK)||"";
@@ -430,28 +444,32 @@ function normalizeCases(cases){
   n.systemAmount=+(n.estimatedAmount||n.systemAmount)||0;
   n.people=+n.people||0;
   n.periods=getHalfDayCount(n.startTime,n.endTime);
+  n.timeline=Array.isArray(n.timeline)?n.timeline:[];
+  n.actionLogs=Array.isArray(n.actionLogs)?n.actionLogs:[];
+  n.checklist={...defaultChecklist(),...(n.checklist||{})};
   if(!n.systemAmount)n.systemAmount=calc(n).total;
   if(!n.amount)n.amount=n.systemAmount;
   return n;
  });
 }
-function normalizeStatus(status){let s=String(status||"待審核").trim();if(s.includes("核准"))return"已核准";if(s.includes("補件"))return"需補件";if(s.includes("取消"))return"已取消";if(s.includes("待")||s.includes("審"))return"待審核";return s}
+function normalizeStatus(status){let s=String(status||"已送件").trim();if(workflowTransitions[s])return s;if(s.includes("待審核")||s.includes("審核"))return"承辦審核中";if(s.includes("補件"))return"待補件";if(s.includes("核准"))return"主任核准";if(s.includes("取消")||s.includes("退件"))return"主任退件";return s}
+function defaultChecklist(){return Object.fromEntries(checklistItems.map(x=>[x,false]))}
 function normalizeRooms(rooms){if(Array.isArray(rooms))return rooms;if(!rooms)return[];return String(rooms).split(/[、,，/｜|]/).map(s=>s.trim()).filter(Boolean)}
 function normalizeList(value){if(Array.isArray(value))return value;if(!value)return[];return String(value).split(/[、,，/｜|]/).map(s=>s.trim()).filter(Boolean)}
 function isStatus(x,status){return normalizeStatus(x.status)===status}
 function ensureSelectedCase(){if(!data.length){selectedCaseNo="";return}if(!data.some(x=>x.caseNo===selectedCaseNo))selectedCaseNo=data[0].caseNo}
 function renderAll(){ensureSelectedCase();renderShell();renderMetrics();renderPending();renderReviewCenter();renderAdminCalendar();renderTables()}
 function renderShell(){$("#frontNav").classList.toggle("hide",admin);$("#adminNav").classList.toggle("hide",!admin);$("#adminState").textContent=admin?"後台管理者":"申請人前台";$("#adminEntry").textContent=admin?"回到 Dashboard":"後台登入"}
-function renderMetrics(){let approved=data.filter(x=>isStatus(x,"已核准"));$("#mTotal").textContent=data.length;$("#mPending").textContent=data.filter(x=>isStatus(x,"待審核")).length;$("#mApproved").textContent=approved.length;$("#mMoney").textContent=money(approved.reduce((s,x)=>s+(+x.amount||0),0))}
+function renderMetrics(){let approvedStatuses=["主任核准","待繳費","已繳費","活動完成","已結案"],approved=data.filter(x=>approvedStatuses.includes(normalizeStatus(x.status)));$("#mTotal").textContent=data.length;$("#mPending").textContent=data.filter(x=>["已送件","承辦審核中","待補件","補件完成"].includes(normalizeStatus(x.status))).length;$("#mApproved").textContent=approved.length;$("#mMoney").textContent=money(approved.reduce((s,x)=>s+(+x.amount||0),0))}
 async function renderAvailability(){let el=$("#availabilityList");if(!el)return;let start=$("#availabilityStart")?.value||today(),days=+($("#availabilityDays")?.value||14);el.innerHTML="<p class='muted'>讀取可預約日期中...</p>";try{let res=await api("availability",{startDate:start,days});if(!res.ok)throw new Error(res.error||"讀取失敗");el.innerHTML=(res.dates||[]).map(x=>{let d=new Date(x.date+"T00:00:00");return`<article class="item"><div><b>${esc(x.date)}</b><br><span class="muted">${weekday(d)}</span></div><div>${x.available?"目前可提出申請":"已有申請，請洽管理者確認"}</div><span class="badge ${x.available?"可申請":"已有申請"}">${esc(x.label)}</span></article>`}).join("")}catch(err){el.innerHTML=`<p class='muted'>無法讀取檔期：${esc(err.message)}</p>`}}
 function renderQueryResult(found){let el=$("#queryResult");el.classList.remove("hide");if(!found){el.innerHTML="<p>查無符合的申請資料，請確認案件編號與 Email 是否正確。</p>";return}el.innerHTML=`<h3>${esc(found.caseNo)}</h3><p><b>狀態：</b><span class="badge ${found.status}">${found.status}</span></p><p><b>使用日期：</b>${esc(found.startDate)} ${esc(found.startTime)}-${esc(found.endTime)}</p><p><b>申請目的：</b>${esc(found.purpose)}</p><p><b>試算 / 核定金額：</b>${money(found.amount)}</p><p><b>審核意見：</b>${esc(found.handlerOpinion||"尚無審核意見")}</p>`}
-function renderPending(){let rows=data.filter(x=>isStatus(x,"待審核")).map(itemHtml).join("");$("#pendingList").innerHTML=rows||"<p class='muted'>目前沒有待審核案件。</p>"}
+function renderPending(){let rows=data.filter(x=>["已送件","承辦審核中","待補件","補件完成"].includes(normalizeStatus(x.status))).map(itemHtml).join("");$("#pendingList").innerHTML=rows||"<p class='muted'>目前沒有待處理案件。</p>"}
 function renderAdminCalendar(){let f=$("#statusFilter")?.value||"all";$("#adminCalendarList").innerHTML=data.filter(x=>f==="all"||isStatus(x,f)).map(itemHtml).join("")||"<p class='muted'>沒有符合條件的案件。</p>"}
 function itemHtml(x){let status=normalizeStatus(x.status),rooms=normalizeRooms(x.rooms);return`<article class="item"><div><b>${esc(x.startDate||"-")}</b><br><span class="muted">${esc(x.startTime||"")}-${esc(x.endTime||"")}</span></div><div><b>${esc(x.caseNo||"")}</b> ${esc(x.purpose||"未命名活動")}<br><span class="muted">${esc(x.unit)}｜${esc(x.applicant)}｜${rooms.map(esc).join("、")}｜${x.people||0}人</span></div><span class="badge ${status}">${status}</span></article>`}
 function renderReviewCenter(){let list=$("#caseListPanel"),detail=$("#caseDetailPanel");if(!list||!detail)return;if(!data.length){list.innerHTML="<p class='muted'>目前沒有案件。</p>";detail.innerHTML="<p class='muted'>目前沒有可審核案件。</p>";return}let selected=data.find(x=>x.caseNo===selectedCaseNo)||data[0];selectedCaseNo=selected.caseNo;list.innerHTML=data.map(caseListItem).join("");detail.innerHTML=caseDetailHtml(selected);bindReviewCenter()}
 function caseListItem(x){let status=normalizeStatus(x.status);return`<button class="case-card ${x.caseNo===selectedCaseNo?"active":""}" data-select-case="${esc(x.caseNo)}"><strong>${esc(x.caseNo||"")}</strong><span class="case-meta">${esc(x.applicant||"-")}｜${esc(x.unit||"-")}</span><span class="case-meta">${esc(x.startDate||"-")}</span><span class="badge ${status}">${status}</span></button>`}
 function caseDetailHtml(x){let status=normalizeStatus(x.status),rooms=normalizeRooms(x.rooms),c=calc(x),systemAmount=+(x.systemAmount||c.total||0),approvedAmount=+(x.amount||systemAmount||0);return`
-<div class="head"><div><h2>${esc(x.caseNo||"")}</h2><span class="badge ${status}">${status}</span></div><select data-review-status="${esc(x.caseNo)}">${["待審核","已核准","需補件","已取消"].map(s=>`<option ${s===status?"selected":""}>${s}</option>`).join("")}</select></div>
+<div class="head"><div><h2>${esc(x.caseNo||"")}</h2><span class="badge ${status}">${status}</span></div><div class="admin-actions">${workflowButtonsHtml(x)}</div></div>
 <div class="detail-grid">
   <section class="detail-section"><h3>基本資料</h3>${kv("申請人",x.applicant)}${kv("申請單位",x.unit)}${kv("單位類別",x.unitType)}${kv("E-mail",x.email)}${kv("聯絡電話",x.phone)}${kv("申請目的",x.purpose)}</section>
   <section class="detail-section"><h3>借用資訊</h3>${kv("使用日期",`${x.startDate||""} 至 ${x.endDate||""}`)}${kv("使用時間",`${x.startTime||""} - ${x.endTime||""}`)}${kv("計價單位",halfDayLabel(x.periods||getHalfDayCount(x.startTime,x.endTime)))}${kv("預估人數",`${x.people||0} 人`)}${kv("假日/夜間",x.offHours==="yes"?"是，需要事前申請":"否")}</section>
@@ -460,16 +478,20 @@ function caseDetailHtml(x){let status=normalizeStatus(x.status),rooms=normalizeR
   <section class="detail-section"><h3>費用明細</h3>${feeRows(c)}<div class="kv"><b>系統試算金額</b><span>${money(systemAmount)}</span></div><label>核定金額（可修改）<input type="number" min="0" data-approved-amount="${esc(x.caseNo)}" value="${approvedAmount}"></label></section>
   <section class="detail-section"><h3>備註與附件</h3>${kv("備註",x.note||"無")}${kv("附件狀態",x.attachments||"未填")}</section>
   <section class="detail-section"><h3>審核意見</h3><label>承辦人審核意見<textarea rows="4" data-handler-opinion="${esc(x.caseNo)}">${esc(x.handlerOpinion||"")}</textarea></label><label>主任決行意見<textarea rows="4" data-director-opinion="${esc(x.caseNo)}">${esc(x.directorOpinion||"")}</textarea></label></section>
-  <section class="detail-section"><h3>案件歷程</h3><div class="timeline">${timelineHtml(status)}</div><div class="admin-actions"><button class="ghost" data-notify="supplement">寄送補件通知</button><button class="ghost" data-notify="approve">寄送核准通知</button><button class="ghost" data-notify="payment">寄送收款通知</button></div></section>
+  <section class="detail-section"><h3>待辦事項</h3>${checklistHtml(x)}</section>
+  <section class="detail-section"><h3>Timeline</h3><div class="timeline">${timelineHtml(x)}</div><div class="admin-actions"><button class="ghost" data-notify="supplement">寄送補件通知</button><button class="ghost" data-notify="approve">寄送核准通知</button><button class="ghost" data-notify="payment">寄送收款通知</button></div></section>
+  <section class="detail-section"><h3>案件操作紀錄</h3><div class="timeline">${actionLogsHtml(x)}</div></section>
 </div>`}
 function kv(label,value){return`<div class="kv"><b>${label}</b><span>${esc(value||"-")}</span></div>`}
 function feeRows(c){return c.details.map(item=>`<div class="kv"><b>${esc(item.label)}</b><span>${esc(item.formula)}</span></div>`).join("")+`<div class="kv"><b>預估總計</b><span>${money(c.total)}</span></div>`}
-function timelineHtml(status){let active=historyLevel(status),stages=["已送件","承辦審核","主任核准","已通知繳費","已完成"];return stages.map((s,i)=>`<div class="stage ${i<=active?"active":""}">${s}</div>`).join("")}
-function historyLevel(status){if(status==="已核准")return 2;if(status==="已取消")return 0;if(status==="需補件")return 1;return 1}
-function bindReviewCenter(){$$("[data-select-case]").forEach(el=>el.onclick=()=>{selectedCaseNo=el.dataset.selectCase;renderReviewCenter()});$$("[data-review-status]").forEach(el=>el.onchange=()=>upd(el.dataset.reviewStatus,{status:el.value}));$$("[data-approved-amount]").forEach(el=>el.onchange=()=>upd(el.dataset.approvedAmount,{amount:+el.value||0}));$$("[data-handler-opinion]").forEach(el=>el.onchange=()=>upd(el.dataset.handlerOpinion,{handlerOpinion:el.value}));$$("[data-director-opinion]").forEach(el=>el.onchange=()=>upd(el.dataset.directorOpinion,{directorOpinion:el.value}));$$("[data-notify]").forEach(el=>el.onclick=()=>toast(`${el.textContent}：目前尚未串接 Email`))}
+function workflowButtonsHtml(x){let status=normalizeStatus(x.status),next=workflowTransitions[status]||[];if(!next.length)return`<span class="muted">無下一步</span>`;return next.map(s=>`<button class="${s==='主任退件'?'ghost danger':'primary'}" data-workflow="${esc(x.caseNo)}" data-next-status="${esc(s)}">${esc(workflowLabels[s]||s)}</button>`).join("")}
+function timelineHtml(x){let events=Array.isArray(x.timeline)?x.timeline:[];if(!events.length)events=[{date:"-",time:"",status:normalizeStatus(x.status),actor:"系統"}];return events.map(e=>`<div class="stage active"><span><b>${esc(e.status||"")}</b><br><span class="muted">${esc(e.date||"")} ${esc(e.time||"")}｜${esc(e.actor||"")}</span></span></div>`).join("")}
+function actionLogsHtml(x){let logs=Array.isArray(x.actionLogs)?x.actionLogs:[];return logs.length?logs.map(e=>`<div class="stage active"><span><b>${esc(e.action||"")}</b><br><span class="muted">${esc(e.date||"")} ${esc(e.time||"")}｜${esc(e.actor||"")}</span></span></div>`).join(""):"<p class='muted'>尚無操作紀錄。</p>"}
+function checklistHtml(x){let list=x.checklist||{};return checklistItems.map(item=>`<label class="agree"><input type="checkbox" data-checklist="${esc(x.caseNo)}" data-check-item="${esc(item)}" ${list[item]?"checked":""}>${esc(item)}</label>`).join("")}
+function bindReviewCenter(){$$("[data-select-case]").forEach(el=>el.onclick=()=>{selectedCaseNo=el.dataset.selectCase;renderReviewCenter()});$$("[data-workflow]").forEach(el=>el.onclick=()=>upd(el.dataset.workflow,{status:el.dataset.nextStatus,actor:"後台管理者"}));$$("[data-approved-amount]").forEach(el=>el.onchange=()=>upd(el.dataset.approvedAmount,{amount:+el.value||0,actor:"後台管理者"}));$$("[data-handler-opinion]").forEach(el=>el.onchange=()=>upd(el.dataset.handlerOpinion,{handlerOpinion:el.value,actor:"後台管理者"}));$$("[data-director-opinion]").forEach(el=>el.onchange=()=>upd(el.dataset.directorOpinion,{directorOpinion:el.value,actor:"後台管理者"}));$$("[data-checklist]").forEach(el=>el.onchange=()=>upd(el.dataset.checklist,{checklist:{[el.dataset.checkItem]:el.checked},actor:"後台管理者"}));$$("[data-notify]").forEach(el=>el.onclick=()=>toast(`${el.textContent}：目前尚未串接 Email`))}
 function renderTables(){let head="<tr><th>案件編號</th><th>日期</th><th>單位/申請人</th><th>空間</th><th>計價單位</th><th>核定金額</th><th>折扣</th><th>狀態</th><th>審核</th></tr>";$("#billingHead").innerHTML=head;let rows=data.map(rowHtml).join("");$("#billingRows").innerHTML=rows;bindAdminRows()}
-function rowHtml(x){let status=normalizeStatus(x.status),rooms=normalizeRooms(x.rooms).join("、");return`<tr><td><b>${esc(x.caseNo||"")}</b></td><td>${esc(x.startDate)}<br><span class="muted">${esc(x.startTime)}-${esc(x.endTime)}</span></td><td><b>${esc(x.unit)}</b><br>${esc(x.applicant)}<br><span class="muted">${esc(x.email)}｜${esc(x.phone)}</span></td><td>${esc(rooms)}</td><td>${halfDayLabel(x.periods||getHalfDayCount(x.startTime,x.endTime))}</td><td>${money(x.amount)}</td><td><select data-discount="${esc(x.caseNo)}">${Object.keys(discountMap).map(d=>`<option ${d===x.discount?"selected":""}>${d}</option>`).join("")}</select></td><td><select data-status="${esc(x.caseNo)}">${["待審核","已核准","需補件","已取消"].map(s=>`<option ${s===status?"selected":""}>${s}</option>`).join("")}</select></td><td><textarea data-opinion="${esc(x.caseNo)}" rows="2" placeholder="承辦人/主任審核意見">${esc(x.handlerOpinion||"")}</textarea></td></tr>`}
-function bindAdminRows(){$$("[data-status]").forEach(el=>el.onchange=()=>upd(el.dataset.status,{status:el.value}));$$("[data-discount]").forEach(el=>el.onchange=()=>upd(el.dataset.discount,{discount:el.value}));$$("[data-opinion]").forEach(el=>el.onchange=()=>upd(el.dataset.opinion,{handlerOpinion:el.value}))}
+function rowHtml(x){let status=normalizeStatus(x.status),rooms=normalizeRooms(x.rooms).join("、");return`<tr><td><b>${esc(x.caseNo||"")}</b></td><td>${esc(x.startDate)}<br><span class="muted">${esc(x.startTime)}-${esc(x.endTime)}</span></td><td><b>${esc(x.unit)}</b><br>${esc(x.applicant)}<br><span class="muted">${esc(x.email)}｜${esc(x.phone)}</span></td><td>${esc(rooms)}</td><td>${halfDayLabel(x.periods||getHalfDayCount(x.startTime,x.endTime))}</td><td>${money(x.amount)}</td><td><select data-discount="${esc(x.caseNo)}">${Object.keys(discountMap).map(d=>`<option ${d===x.discount?"selected":""}>${d}</option>`).join("")}</select></td><td><span class="badge ${status}">${status}</span></td><td><textarea data-opinion="${esc(x.caseNo)}" rows="2" placeholder="承辦人/主任審核意見">${esc(x.handlerOpinion||"")}</textarea></td></tr>`}
+function bindAdminRows(){$$("[data-discount]").forEach(el=>el.onchange=()=>upd(el.dataset.discount,{discount:el.value,actor:"後台管理者"}));$$("[data-opinion]").forEach(el=>el.onchange=()=>upd(el.dataset.opinion,{handlerOpinion:el.value,actor:"後台管理者"}))}
 async function upd(caseNo,patch){try{let res=await api("updateCase",{adminToken,caseNo,...patch});if(!res.ok)throw new Error(res.error||"更新失敗");await refreshAdmin();renderAll();toast("已更新 Google Sheet")}catch(err){toast(err.message)}}
 function money(n){return "NT$ "+Number(n||0).toLocaleString("zh-TW")}
 function today(){return fmtDate(new Date())}
