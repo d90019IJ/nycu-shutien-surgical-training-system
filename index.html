@@ -42,11 +42,6 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
     <button data-view="export">匯出 CSV</button>
     <button data-view="settings">系統設定</button>
   </nav>
-  <div class="login">
-    <span>目前模式</span>
-    <b id="adminState">申請人前台</b>
-    <button class="ghost" id="adminEntry">後台登入</button>
-  </div>
 </aside>
 <main class="main">
 <header class="top">
@@ -315,7 +310,6 @@ const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 document.addEventListener("DOMContentLoaded",async()=>{bind();initDefaults();renderShell();await renderAvailability();if(admin&&adminMode){await refreshAdmin();show("dashboard")}else show("home");});
 function bind(){
  $$(".nav button,[data-view-btn]").forEach(b=>b.onclick=()=>show(b.dataset.view||b.dataset.viewBtn));
- $("#adminEntry").onclick=()=>admin?enterAdminMode():show("loginView");
  $("#userMenuBtn").onclick=e=>{e.stopPropagation();$("#userMenuList").classList.toggle("hide")};
  $("#goFrontBtn").onclick=goFrontMode;
  $("#goAdminBtn").onclick=enterAdminMode;
@@ -511,7 +505,7 @@ function normalizeList(value){if(Array.isArray(value))return value;if(!value)ret
 function isStatus(x,status){return normalizeStatus(x.status)===status}
 function ensureSelectedCase(){if(!data.length){selectedCaseNo="";return}if(!data.some(x=>x.caseNo===selectedCaseNo))selectedCaseNo=data[0].caseNo}
 function renderAll(){ensureSelectedCase();renderShell();renderMetrics();renderPending();renderReviewCenter();renderAdminCalendar();renderBookingCalendar();renderTables()}
-function renderShell(){$("#frontNav").classList.toggle("hide",adminMode);$("#adminNav").classList.toggle("hide",!adminMode);$("#userMenu").classList.toggle("hide",!admin);$("#adminState").textContent=adminMode?"後台管理者":"申請人前台";$("#adminEntry").textContent=admin?"管理後台":"後台登入"}
+function renderShell(){$("#frontNav").classList.toggle("hide",adminMode);$("#adminNav").classList.toggle("hide",!adminMode);$("#userMenu").classList.toggle("hide",!admin);
 function renderMetrics(){let approvedStatuses=["主任核准","待繳費","已繳費","活動完成","已結案"],approved=data.filter(x=>approvedStatuses.includes(normalizeStatus(x.status)));$("#mTotal").textContent=data.length;$("#mPending").textContent=data.filter(x=>["已送件","承辦審核中","待補件","補件完成"].includes(normalizeStatus(x.status))).length;$("#mApproved").textContent=approved.length;$("#mMoney").textContent=money(approved.reduce((s,x)=>s+(+x.amount||0),0))}
 async function renderAvailability(){let el=$("#availabilityList");if(!el)return;let start=$("#availabilityStart")?.value||today(),days=+($("#availabilityDays")?.value||14);el.innerHTML="<p class='muted'>讀取可預約日期中...</p>";try{let res=await api("availability",{startDate:start,days});if(!res.ok)throw new Error(res.error||"讀取失敗");el.innerHTML=(res.dates||[]).map(x=>{let d=new Date(x.date+"T00:00:00");return`<article class="item"><div><b>${esc(x.date)}</b><br><span class="muted">${weekday(d)}</span></div><div>${x.available?"目前可提出申請":"已有申請，請洽管理者確認"}</div><span class="badge ${x.available?"可申請":"已有申請"}">${esc(x.label)}</span></article>`}).join("")}catch(err){el.innerHTML=`<p class='muted'>無法讀取檔期：${esc(err.message)}</p>`}}
 function renderQueryResult(found){let el=$("#queryResult");el.classList.remove("hide");if(!found){el.innerHTML="<p>查無符合的申請資料，請確認案件編號與 Email 是否正確。</p>";return}el.innerHTML=`<h3>${esc(found.caseNo)}</h3><p><b>狀態：</b><span class="badge ${found.status}">${found.status}</span></p><p><b>使用日期：</b>${esc(found.startDate)} ${esc(found.startTime)}-${esc(found.endTime)}</p><p><b>申請目的：</b>${esc(found.purpose)}</p><p><b>試算 / 核定金額：</b>${money(found.amount)}</p><p><b>審核意見：</b>${esc(found.handlerOpinion||"尚無審核意見")}</p>`}
