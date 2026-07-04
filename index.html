@@ -339,12 +339,25 @@ async function api(action,payload={}){
  let text=await res.text();
  try{return JSON.parse(text)}catch(err){throw new Error("API 回傳格式不是 JSON，請確認 Apps Script 部署權限。")}
 }
+async function ensureRequestedDatesAvailable(startDate,endDate){
+ if(!startDate||!endDate)return{ok:false,message:"請先選擇使用開始日期與結束日期。"};
+ if(endDate<startDate)return{ok:false,message:"使用結束日期不能早於開始日期。"};
+ let start=new Date(startDate+"T00:00:00"),end=new Date(endDate+"T00:00:00");
+ let days=Math.floor((end-start)/86400000)+1;
+ let res=await api("availability",{startDate,days});
+ if(!res.ok)throw new Error(res.error||"無法確認可預約日期，請稍後再試。");
+ let blocked=(res.dates||[]).filter(x=>!x.available);
+ if(blocked.length)return{ok:false,message:`${blocked.map(x=>x.date).join("、")} 已有申請，請改選其他日期。`};
+ return{ok:true};
+}
 async function submitApplication(e){
  e.preventDefault();
  let btn=e.submitter;
  if(btn)btn.disabled=true;
  try{
   let x=formData();
+  let available=await ensureRequestedDatesAvailable(x.startDate,x.endDate);
+  if(!available.ok)throw new Error(available.message);
   let res=await api("submitApplication",{application:x});
   if(!res.ok)throw new Error(res.error||"申請送出失敗");
   e.target.reset();
@@ -469,3 +482,4 @@ function toast(t){let el=$("#toast");el.textContent=t;el.classList.add("show");s
 </script>
 </body>
 </html>
+
