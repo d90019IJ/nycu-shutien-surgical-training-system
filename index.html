@@ -8,7 +8,7 @@
 :root{--ink:#17212b;--muted:#637487;--line:#d9e3ea;--bg:#f5f7fa;--panel:#fff;--teal:#0e7c7b;--blue:#2f6fbb;--red:#b64444;--green:#27784d;--amber:#a96d10;--side:#102333}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft JhengHei",Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}
 .shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}.side{background:var(--side);color:#fff;padding:22px;display:flex;flex-direction:column;gap:22px}.brand{display:flex;gap:12px;align-items:center}.mark{width:42px;height:42px;border-radius:8px;background:#e8f6f4;color:var(--teal);display:grid;place-items:center;font-weight:900}.brand span,.muted{color:var(--muted);font-size:13px}.side .brand span,.login span{color:#b6c6d5}.nav{display:grid;gap:8px}.nav button,.ghost,.primary,.icon{border:1px solid transparent;border-radius:8px;min-height:40px;padding:0 14px}.nav button{background:transparent;color:#dce8f2;text-align:left}.nav button.active,.nav button:hover{background:#20394d;color:#fff}.nav h3{margin:12px 0 4px;color:#8fb1c9;font-size:12px;letter-spacing:.08em}.login{margin-top:auto;border:1px solid #ffffff24;border-radius:8px;padding:14px;display:grid;gap:10px}a.ghost{display:inline-flex;align-items:center;text-decoration:none}
-.main{padding:26px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:20px}.eyebrow{margin:0 0 4px;color:var(--muted);font-size:13px}h1,h2,h3,p{margin-top:0}h1{font-size:28px;margin-bottom:0}h2{font-size:20px;margin-bottom:0}.primary{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}.ghost,.icon{background:#fff;border-color:var(--line);color:var(--ink)}.danger{color:var(--red);border-color:#e7caca}.icon{width:42px;padding:0}.hide{display:none!important}
+.main{padding:26px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:20px}.eyebrow{margin:0 0 4px;color:var(--muted);font-size:13px}h1,h2,h3,p{margin-top:0}h1{font-size:28px;margin-bottom:0}h2{font-size:20px;margin-bottom:0}.primary{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}.ghost,.icon{background:#fff;border-color:var(--line);color:var(--ink)}.danger{color:var(--red);border-color:#e7caca}.icon{width:42px;padding:0}.hide{display:none!important}.user-menu{position:relative}.user-menu-list{position:absolute;right:0;top:46px;z-index:12;min-width:180px;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 12px 30px #1023331f;padding:6px;display:grid;gap:4px}.user-menu-list button{border:0;background:#fff;text-align:left;border-radius:6px;min-height:38px;padding:0 10px}.user-menu-list button:hover{background:#eef8f7}
 .view{display:none}.view.active{display:grid;gap:18px}.hero{position:relative;min-height:230px;border-radius:8px;overflow:hidden;background:linear-gradient(135deg,#d2eef1,#f8fbfb 46%,#214f63)}.hero:before{content:"";position:absolute;inset:auto 0 0;height:95px;background:#10233366}.hero:after{content:"";position:absolute;right:54px;bottom:50px;width:380px;height:78px;border-radius:8px;background:linear-gradient(90deg,#fff,#d9eeee);box-shadow:-90px -34px 0 -10px #ffffffcc,-180px -16px 0 -10px #ffffffcc}.hero div{position:absolute;left:24px;bottom:22px;color:#fff;text-shadow:0 2px 12px #0008}.hero strong{font-size:26px}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card,.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px #2030400d}.card{padding:18px}.card span{display:block;color:var(--muted);margin-bottom:8px}.card strong{font-size:26px}.panel{padding:20px}.head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}label,fieldset{display:grid;gap:7px;font-weight:700;color:#354656}input,select,textarea{width:100%;min-height:42px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fff}textarea{resize:vertical}.wide{grid-column:1/-1}.checks{border:1px solid var(--line);border-radius:8px;padding:14px;grid-template-columns:repeat(3,1fr)}.checks label,.agree{display:flex;align-items:center;gap:8px;font-weight:600}.checks input,.agree input{width:auto;min-height:auto}
@@ -51,7 +51,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
 <main class="main">
 <header class="top">
   <div><p class="eyebrow">NYCU Surgery - Shutien Training Room</p><h1>書田外科訓練中心預借系統</h1></div>
-  <div class="actions"><button class="primary" data-view-btn="apply">我要申請</button></div>
+  <div class="actions"><button class="primary" data-view-btn="apply">我要申請</button><div class="user-menu hide" id="userMenu"><button type="button" class="ghost" id="userMenuBtn">👤 admin ▼</button><div class="user-menu-list hide" id="userMenuList"><button type="button" id="goFrontBtn">🏠 回到前台</button><button type="button" id="goAdminBtn">⚙️ 管理後台</button><button type="button" id="userLogoutBtn">🚪 登出</button></div></div></div>
 </header>
 
 <section id="home" class="view active">
@@ -306,15 +306,20 @@ const checklistItems=["已確認場地","已通知申請人","已收到繳費","
 let systemSettings=loadSettings();
 let admin=sessionStorage.getItem(AK)==="1";
 let adminToken=sessionStorage.getItem(TK)||"";
+let adminMode=sessionStorage.getItem("shutien-admin-mode-v1")==="1"&&admin;
 let data=[];
 let applyStep=1;
 let selectedCaseNo="";
 let calendarMonth=new Date();
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-document.addEventListener("DOMContentLoaded",async()=>{bind();initDefaults();renderShell();await renderAvailability();if(admin){await refreshAdmin();show("dashboard")}else show("home");});
+document.addEventListener("DOMContentLoaded",async()=>{bind();initDefaults();renderShell();await renderAvailability();if(admin&&adminMode){await refreshAdmin();show("dashboard")}else show("home");});
 function bind(){
  $$(".nav button,[data-view-btn]").forEach(b=>b.onclick=()=>show(b.dataset.view||b.dataset.viewBtn));
- $("#adminEntry").onclick=()=>show(admin?"dashboard":"loginView");
+ $("#adminEntry").onclick=()=>admin?enterAdminMode():show("loginView");
+ $("#userMenuBtn").onclick=e=>{e.stopPropagation();$("#userMenuList").classList.toggle("hide")};
+ $("#goFrontBtn").onclick=goFrontMode;
+ $("#goAdminBtn").onclick=enterAdminMode;
+ $("#userLogoutBtn").onclick=logoutAdmin;
  $("#form").oninput=updateApplicationReview;
  $("#form").onsubmit=submitApplication;
  $("#form").onreset=()=>setTimeout(()=>{applyStep=1;showApplyStep();updateApplicationReview()},0);
@@ -322,7 +327,7 @@ function bind(){
  $$("[data-prev-step]").forEach(b=>b.onclick=()=>goApplyStep(-1));
  $("#queryForm").onsubmit=queryApplication;
  $("#loginBtn").onclick=loginAdmin;
- $("#logoutBtn").onclick=()=>{admin=false;adminToken="";sessionStorage.removeItem(AK);sessionStorage.removeItem(TK);data=[];renderShell();show("home");toast("已登出後台")};
+ $("#logoutBtn").onclick=logoutAdmin;
  $("#statusFilter").onchange=renderAdminCalendar;
  $("#calPrev").onclick=()=>{calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()-1,1);renderBookingCalendar()};
  $("#calNext").onclick=()=>{calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+1,1);renderBookingCalendar()};
@@ -332,9 +337,10 @@ function bind(){
  $("#resetSettingsBtn").onclick=resetSystemSettings;
  $("#availabilityStart").onchange=renderAvailability;
  $("#availabilityDays").onchange=renderAvailability;
+ document.addEventListener("click",e=>{if(!$("#userMenu").contains(e.target))$("#userMenuList").classList.add("hide")});
 }
 function initDefaults(){let d=today();$$('input[name="applyDate"],#availabilityStart').forEach(el=>{if(!el.value)el.value=d});renderPricing();renderRoomOptions();showApplyStep();updateApplicationReview()}
-async function show(id){if(isAdminView(id)&&!admin)id="loginView";$$(".view").forEach(v=>v.classList.toggle("active",v.id===id));$$(".nav button").forEach(b=>b.classList.toggle("active",(b.dataset.view||b.dataset.viewBtn)===id));renderShell();if(id==="availability")await renderAvailability();if(id==="pricing")renderPricing();if(id==="apply"){renderRoomOptions();updateApplicationReview()}if(id==="settings")renderSettings();if(isAdminView(id)){await refreshAdmin();renderAll();if(id==="bookingCalendar")renderBookingCalendar()}}
+async function show(id){if(isAdminView(id)&&(!admin||!adminMode))id=admin?"home":"loginView";$$(".view").forEach(v=>v.classList.toggle("active",v.id===id));$$(".nav button").forEach(b=>b.classList.toggle("active",(b.dataset.view||b.dataset.viewBtn)===id));renderShell();if(id==="availability")await renderAvailability();if(id==="pricing")renderPricing();if(id==="apply"){renderRoomOptions();updateApplicationReview()}if(id==="settings")renderSettings();if(isAdminView(id)){await refreshAdmin();renderAll();if(id==="bookingCalendar")renderBookingCalendar()}}
 function isAdminView(id){return ["dashboard","pending","allCases","adminCalendar","bookingCalendar","billing","export","settings"].includes(id)}
 function loadSettings(){try{return mergeSettings(JSON.parse(localStorage.getItem(SK)||"{}"))}catch{return mergeSettings({})}}
 function mergeSettings(saved){let merged=JSON.parse(JSON.stringify(defaultSettings));Object.keys(saved.rooms||{}).forEach(name=>merged.rooms[name]={...(merged.rooms[name]||{}),...saved.rooms[name]});merged.fees={...merged.fees,...(saved.fees||{})};return merged}
@@ -451,9 +457,11 @@ async function loginAdmin(){
   let res=await api("listCases",{adminToken:token,status:"all"});
   if(!res.ok)throw new Error(res.error||"後台登入失敗");
   admin=true;
+  adminMode=true;
   adminToken=token;
   sessionStorage.setItem(AK,"1");
   sessionStorage.setItem(TK,token);
+  sessionStorage.setItem("shutien-admin-mode-v1","1");
   data=normalizeCases(res.cases||[]);
   renderAll();
   show("dashboard");
@@ -462,6 +470,9 @@ async function loginAdmin(){
   toast(err.message);
  }
 }
+function goFrontMode(){adminMode=false;sessionStorage.removeItem("shutien-admin-mode-v1");$("#userMenuList").classList.add("hide");renderShell();show("home");toast("已切換至前台")}
+async function enterAdminMode(){if(!admin){show("loginView");return}adminMode=true;sessionStorage.setItem("shutien-admin-mode-v1","1");$("#userMenuList").classList.add("hide");await refreshAdmin();renderShell();show("dashboard")}
+function logoutAdmin(){admin=false;adminMode=false;adminToken="";sessionStorage.removeItem(AK);sessionStorage.removeItem(TK);sessionStorage.removeItem("shutien-admin-mode-v1");data=[];$("#userMenuList").classList.add("hide");renderShell();show("home");toast("已登出")}
 async function refreshAdmin(){
  if(!admin||!adminToken)return;
  try{
@@ -500,7 +511,7 @@ function normalizeList(value){if(Array.isArray(value))return value;if(!value)ret
 function isStatus(x,status){return normalizeStatus(x.status)===status}
 function ensureSelectedCase(){if(!data.length){selectedCaseNo="";return}if(!data.some(x=>x.caseNo===selectedCaseNo))selectedCaseNo=data[0].caseNo}
 function renderAll(){ensureSelectedCase();renderShell();renderMetrics();renderPending();renderReviewCenter();renderAdminCalendar();renderBookingCalendar();renderTables()}
-function renderShell(){$("#frontNav").classList.toggle("hide",admin);$("#adminNav").classList.toggle("hide",!admin);$("#adminState").textContent=admin?"後台管理者":"申請人前台";$("#adminEntry").textContent=admin?"回到 Dashboard":"後台登入"}
+function renderShell(){$("#frontNav").classList.toggle("hide",adminMode);$("#adminNav").classList.toggle("hide",!adminMode);$("#userMenu").classList.toggle("hide",!admin);$("#adminState").textContent=adminMode?"後台管理者":"申請人前台";$("#adminEntry").textContent=admin?"管理後台":"後台登入"}
 function renderMetrics(){let approvedStatuses=["主任核准","待繳費","已繳費","活動完成","已結案"],approved=data.filter(x=>approvedStatuses.includes(normalizeStatus(x.status)));$("#mTotal").textContent=data.length;$("#mPending").textContent=data.filter(x=>["已送件","承辦審核中","待補件","補件完成"].includes(normalizeStatus(x.status))).length;$("#mApproved").textContent=approved.length;$("#mMoney").textContent=money(approved.reduce((s,x)=>s+(+x.amount||0),0))}
 async function renderAvailability(){let el=$("#availabilityList");if(!el)return;let start=$("#availabilityStart")?.value||today(),days=+($("#availabilityDays")?.value||14);el.innerHTML="<p class='muted'>讀取可預約日期中...</p>";try{let res=await api("availability",{startDate:start,days});if(!res.ok)throw new Error(res.error||"讀取失敗");el.innerHTML=(res.dates||[]).map(x=>{let d=new Date(x.date+"T00:00:00");return`<article class="item"><div><b>${esc(x.date)}</b><br><span class="muted">${weekday(d)}</span></div><div>${x.available?"目前可提出申請":"已有申請，請洽管理者確認"}</div><span class="badge ${x.available?"可申請":"已有申請"}">${esc(x.label)}</span></article>`}).join("")}catch(err){el.innerHTML=`<p class='muted'>無法讀取檔期：${esc(err.message)}</p>`}}
 function renderQueryResult(found){let el=$("#queryResult");el.classList.remove("hide");if(!found){el.innerHTML="<p>查無符合的申請資料，請確認案件編號與 Email 是否正確。</p>";return}el.innerHTML=`<h3>${esc(found.caseNo)}</h3><p><b>狀態：</b><span class="badge ${found.status}">${found.status}</span></p><p><b>使用日期：</b>${esc(found.startDate)} ${esc(found.startTime)}-${esc(found.endTime)}</p><p><b>申請目的：</b>${esc(found.purpose)}</p><p><b>試算 / 核定金額：</b>${money(found.amount)}</p><p><b>審核意見：</b>${esc(found.handlerOpinion||"尚無審核意見")}</p>`}
