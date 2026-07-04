@@ -145,7 +145,17 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
 <section class="form-step wide grid" data-step="4">
   <div class="result wide"><h3>申請摘要</h3><div id="applicationSummary" class="summary"></div></div>
   <div class="estimate wide"><div><span>確認費用明細</span><strong id="finalEstimate">NT$ 0</strong></div><div id="finalFeeDetail" class="fee-detail"></div></div>
-  <label class="agree wide"><input type="checkbox" required>我已詳讀租借辦法以及注意事項，並同意送出申請。</label>
+  <div class="notice wide">
+    <h3>📖 借用須知</h3>
+    <p>請於送出申請前確認以下事項：</p>
+    <p>1. 📅 請於活動前至少 2 週提出申請，並經本中心審核通過後始得使用。</p>
+    <p>2. 💰 場地以半天（4 小時）為計價單位；夜間、假日及感染性垃圾等費用，將依本中心收費標準另行計費。</p>
+    <p>3. 📄 活動議程（或核准公文）、器材需求、停車名單及其他特殊需求（如器材協助、場地布置、技術支援等），請依規定期限提供；逾期恕不受理臨時需求。</p>
+    <p>4. 🧹 活動結束後請恢復場地整潔，歸還借用器材；設備或器材如有損壞或遺失，應依規定負修復或賠償責任。</p>
+    <p>5. 🚫 張貼海報、公告或其他資料時，請務必使用不殘膠之黏貼用品（如紙膠帶、3M 無痕膠條），不得使用雙面膠、泡棉膠等易留殘膠材質；如造成場地或設備損壞，申請單位應負修復或賠償責任。</p>
+  </div>
+  <label class="agree wide"><input type="checkbox" required>我已閱讀並同意遵守《書田外科訓練中心借用管理規範》</label>
+  <div class="wide"><button type="button" class="ghost" onclick="toast('PDF 尚未上傳，請由管理者提供完整借用管理規範。')">📄 查看完整借用管理規範（PDF）</button></div>
   <div class="actions wide"><button type="button" class="ghost" data-prev-step>上一步</button><button type="reset" class="ghost">清除</button><button class="primary">送出申請</button></div>
 </section>
 </form>
