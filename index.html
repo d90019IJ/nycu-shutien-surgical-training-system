@@ -16,6 +16,7 @@
 .list{display:grid;gap:10px}.item{display:grid;grid-template-columns:150px 1fr auto;gap:14px;align-items:center;border-top:1px solid var(--line);padding:12px 0}.item:first-child{border-top:0}.badge{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:800;white-space:nowrap}.已送件,.承辦審核中,.補件完成{background:#fff5df;color:var(--amber)}.主任核准,.待繳費,.已繳費,.活動完成,.已結案,.可申請{background:#e8f5ed;color:var(--green)}.待補件,.已有申請{background:#eaf1fb;color:var(--blue)}.主任退件,.不可申請{background:#faeeee;color:var(--red)}
 .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.info-grid .panel{min-height:150px}.price{display:grid;gap:10px}.price-row{display:grid;grid-template-columns:1fr auto;gap:12px;border-bottom:1px solid var(--line);padding:10px 0}.price-row:last-child{border-bottom:0}.result{border:1px solid var(--line);border-radius:8px;padding:16px;background:#fbfdfe}.result strong{font-size:22px;color:var(--teal)}
 table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}th{background:#f0f5f8}.table{overflow:auto}.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.toast{position:fixed;right:22px;bottom:22px;background:#102333;color:#fff;padding:12px 16px;border-radius:8px;opacity:0;transform:translateY(12px);transition:.2s}.toast.show{opacity:1;transform:none}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:14px 0}.cal-head,.cal-day{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px;min-height:112px;background:#fff}.cal-head{min-height:auto;background:#f0f5f8;font-weight:800;text-align:center}.cal-day:nth-child(7n),.cal-head:nth-child(7n){border-right:0}.cal-day.empty{background:#f7fafc}.cal-date{font-weight:900;margin-bottom:8px}.cal-event{display:block;width:100%;border:0;border-radius:6px;padding:6px 7px;margin:5px 0;text-align:left;color:#fff;font-size:13px;line-height:1.3}.room-or{background:#b64444;color:#fff}.room-419{background:#2f6fbb;color:#fff}.room-420{background:#27784d;color:#fff}.cal-event small{display:block;color:#ffffffd9}
 @media(max-width:900px){.shell{grid-template-columns:1fr}.cards,.grid,.checks,.info-grid,.review-center,.detail-grid{grid-template-columns:1fr}.item{grid-template-columns:1fr}.top,.head{align-items:flex-start;flex-direction:column}.hero:after{display:none}}
 </style>
 </head>
@@ -37,6 +38,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
     <button data-view="pending">待處理案件</button>
     <button data-view="allCases">所有申請</button>
     <button data-view="adminCalendar">行事曆</button>
+    <button data-view="bookingCalendar">借用行事曆</button>
     <button data-view="billing">收費核定</button>
     <button data-view="export">匯出 CSV</button>
     <button data-view="settings">系統設定</button>
@@ -216,6 +218,26 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
   <section class="panel"><div class="head"><h2>行事曆</h2><select id="statusFilter"><option value="all">全部</option><option>已送件</option><option>承辦審核中</option><option>待補件</option><option>補件完成</option><option>主任核准</option><option>待繳費</option><option>已繳費</option><option>活動完成</option><option>主任退件</option><option>已結案</option></select></div><div id="adminCalendarList" class="list"></div></section>
 </section>
 
+<section id="bookingCalendar" class="view admin-view">
+  <section class="panel">
+    <div class="head">
+      <h2>借用行事曆</h2>
+      <div class="actions">
+        <button class="ghost" id="calPrev" type="button">上個月</button>
+        <strong id="calendarTitle"></strong>
+        <button class="ghost" id="calNext" type="button">下個月</button>
+      </div>
+    </div>
+    <div class="actions">
+      <span class="badge room-or">多功能外科指導手術室</span>
+      <span class="badge room-419">419 教室</span>
+      <span class="badge room-420">420 教室</span>
+    </div>
+    <div id="bookingCalendarGrid" class="calendar-grid"></div>
+    <div id="bookingCalendarDetail" class="result"></div>
+  </section>
+</section>
+
 <section id="billing" class="view admin-view">
   <section class="panel"><div class="head"><h2>收費核定</h2><span class="muted">可調整折扣與審核狀態</span></div><div class="table"><table><thead id="billingHead"></thead><tbody id="billingRows"></tbody></table></div></section>
 </section>
@@ -282,6 +304,7 @@ let adminToken=sessionStorage.getItem(TK)||"";
 let data=[];
 let applyStep=1;
 let selectedCaseNo="";
+let calendarMonth=new Date();
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 document.addEventListener("DOMContentLoaded",async()=>{bind();initDefaults();renderShell();await renderAvailability();if(admin){await refreshAdmin();show("dashboard")}else show("home");});
 function bind(){
@@ -296,6 +319,8 @@ function bind(){
  $("#loginBtn").onclick=loginAdmin;
  $("#logoutBtn").onclick=()=>{admin=false;adminToken="";sessionStorage.removeItem(AK);sessionStorage.removeItem(TK);data=[];renderShell();show("home");toast("已登出後台")};
  $("#statusFilter").onchange=renderAdminCalendar;
+ $("#calPrev").onclick=()=>{calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()-1,1);renderBookingCalendar()};
+ $("#calNext").onclick=()=>{calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+1,1);renderBookingCalendar()};
  $("#exportBtn").onclick=exportCsv;
  $("#saveSettingsBtn").onclick=saveSystemSettings;
  $("#resetSettingsBtn").onclick=resetSystemSettings;
@@ -303,8 +328,8 @@ function bind(){
  $("#availabilityDays").onchange=renderAvailability;
 }
 function initDefaults(){let d=today();$$('input[name="applyDate"],#availabilityStart').forEach(el=>{if(!el.value)el.value=d});renderPricing();renderRoomOptions();showApplyStep();updateApplicationReview()}
-async function show(id){if(isAdminView(id)&&!admin)id="loginView";$$(".view").forEach(v=>v.classList.toggle("active",v.id===id));$$(".nav button").forEach(b=>b.classList.toggle("active",(b.dataset.view||b.dataset.viewBtn)===id));renderShell();if(id==="availability")await renderAvailability();if(id==="pricing")renderPricing();if(id==="apply"){renderRoomOptions();updateApplicationReview()}if(id==="settings")renderSettings();if(isAdminView(id)){await refreshAdmin();renderAll()}}
-function isAdminView(id){return ["dashboard","pending","allCases","adminCalendar","billing","export","settings"].includes(id)}
+async function show(id){if(isAdminView(id)&&!admin)id="loginView";$$(".view").forEach(v=>v.classList.toggle("active",v.id===id));$$(".nav button").forEach(b=>b.classList.toggle("active",(b.dataset.view||b.dataset.viewBtn)===id));renderShell();if(id==="availability")await renderAvailability();if(id==="pricing")renderPricing();if(id==="apply"){renderRoomOptions();updateApplicationReview()}if(id==="settings")renderSettings();if(isAdminView(id)){await refreshAdmin();renderAll();if(id==="bookingCalendar")renderBookingCalendar()}}
+function isAdminView(id){return ["dashboard","pending","allCases","adminCalendar","bookingCalendar","billing","export","settings"].includes(id)}
 function loadSettings(){try{return mergeSettings(JSON.parse(localStorage.getItem(SK)||"{}"))}catch{return mergeSettings({})}}
 function mergeSettings(saved){let merged=JSON.parse(JSON.stringify(defaultSettings));Object.keys(saved.rooms||{}).forEach(name=>merged.rooms[name]={...(merged.rooms[name]||{}),...saved.rooms[name]});merged.fees={...merged.fees,...(saved.fees||{})};return merged}
 function persistSettings(){localStorage.setItem(SK,JSON.stringify(systemSettings))}
@@ -468,13 +493,17 @@ function normalizeRooms(rooms){if(Array.isArray(rooms))return rooms;if(!rooms)re
 function normalizeList(value){if(Array.isArray(value))return value;if(!value)return[];return String(value).split(/[、,，/｜|]/).map(s=>s.trim()).filter(Boolean)}
 function isStatus(x,status){return normalizeStatus(x.status)===status}
 function ensureSelectedCase(){if(!data.length){selectedCaseNo="";return}if(!data.some(x=>x.caseNo===selectedCaseNo))selectedCaseNo=data[0].caseNo}
-function renderAll(){ensureSelectedCase();renderShell();renderMetrics();renderPending();renderReviewCenter();renderAdminCalendar();renderTables()}
+function renderAll(){ensureSelectedCase();renderShell();renderMetrics();renderPending();renderReviewCenter();renderAdminCalendar();renderBookingCalendar();renderTables()}
 function renderShell(){$("#frontNav").classList.toggle("hide",admin);$("#adminNav").classList.toggle("hide",!admin);$("#adminState").textContent=admin?"後台管理者":"申請人前台";$("#adminEntry").textContent=admin?"回到 Dashboard":"後台登入"}
 function renderMetrics(){let approvedStatuses=["主任核准","待繳費","已繳費","活動完成","已結案"],approved=data.filter(x=>approvedStatuses.includes(normalizeStatus(x.status)));$("#mTotal").textContent=data.length;$("#mPending").textContent=data.filter(x=>["已送件","承辦審核中","待補件","補件完成"].includes(normalizeStatus(x.status))).length;$("#mApproved").textContent=approved.length;$("#mMoney").textContent=money(approved.reduce((s,x)=>s+(+x.amount||0),0))}
 async function renderAvailability(){let el=$("#availabilityList");if(!el)return;let start=$("#availabilityStart")?.value||today(),days=+($("#availabilityDays")?.value||14);el.innerHTML="<p class='muted'>讀取可預約日期中...</p>";try{let res=await api("availability",{startDate:start,days});if(!res.ok)throw new Error(res.error||"讀取失敗");el.innerHTML=(res.dates||[]).map(x=>{let d=new Date(x.date+"T00:00:00");return`<article class="item"><div><b>${esc(x.date)}</b><br><span class="muted">${weekday(d)}</span></div><div>${x.available?"目前可提出申請":"已有申請，請洽管理者確認"}</div><span class="badge ${x.available?"可申請":"已有申請"}">${esc(x.label)}</span></article>`}).join("")}catch(err){el.innerHTML=`<p class='muted'>無法讀取檔期：${esc(err.message)}</p>`}}
 function renderQueryResult(found){let el=$("#queryResult");el.classList.remove("hide");if(!found){el.innerHTML="<p>查無符合的申請資料，請確認案件編號與 Email 是否正確。</p>";return}el.innerHTML=`<h3>${esc(found.caseNo)}</h3><p><b>狀態：</b><span class="badge ${found.status}">${found.status}</span></p><p><b>使用日期：</b>${esc(found.startDate)} ${esc(found.startTime)}-${esc(found.endTime)}</p><p><b>申請目的：</b>${esc(found.purpose)}</p><p><b>試算 / 核定金額：</b>${money(found.amount)}</p><p><b>審核意見：</b>${esc(found.handlerOpinion||"尚無審核意見")}</p>`}
 function renderPending(){let rows=data.filter(x=>["已送件","承辦審核中","待補件","補件完成"].includes(normalizeStatus(x.status))).map(itemHtml).join("");$("#pendingList").innerHTML=rows||"<p class='muted'>目前沒有待處理案件。</p>"}
 function renderAdminCalendar(){let f=$("#statusFilter")?.value||"all";$("#adminCalendarList").innerHTML=data.filter(x=>f==="all"||isStatus(x,f)).map(itemHtml).join("")||"<p class='muted'>沒有符合條件的案件。</p>"}
+function renderBookingCalendar(){let grid=$("#bookingCalendarGrid"),title=$("#calendarTitle"),detail=$("#bookingCalendarDetail");if(!grid||!title||!detail)return;let y=calendarMonth.getFullYear(),m=calendarMonth.getMonth();title.textContent=`${y} 年 ${m+1} 月`;let first=new Date(y,m,1),last=new Date(y,m+1,0),startDay=first.getDay(),days=last.getDate();let weekdays=["日","一","二","三","四","五","六"];let html=weekdays.map(d=>`<div class="cal-head">${d}</div>`).join("");for(let i=0;i<startDay;i++)html+=`<div class="cal-day empty"></div>`;for(let day=1;day<=days;day++){let iso=fmtDate(new Date(y,m,day)),events=calendarEventsForDate(iso);html+=`<div class="cal-day"><div class="cal-date">${day}</div>${events.map(ev=>`<button type="button" class="cal-event ${roomClass(ev.room)}" data-cal-case="${esc(ev.caseNo)}" data-cal-date="${iso}">${esc(ev.room)}<small>${esc(ev.unit||ev.applicant||"-")}</small></button>`).join("")}</div>`}grid.innerHTML=html;$$("[data-cal-case]").forEach(el=>el.onclick=()=>showCalendarDetail(el.dataset.calCase,el.dataset.calDate));detail.innerHTML="<p class='muted'>點選月曆上的借用項目查看詳細資訊。</p>"}
+function calendarEventsForDate(iso){let shown=["主任核准","待繳費","已繳費","活動完成"];return data.filter(x=>shown.includes(normalizeStatus(x.status))&&dateInRange(iso,x.startDate,x.endDate)).flatMap(x=>normalizeRooms(x.rooms).map(room=>({caseNo:x.caseNo,date:iso,room,unit:x.unit,applicant:x.applicant,startTime:x.startTime,endTime:x.endTime,status:normalizeStatus(x.status)})))}
+function roomClass(room){if(String(room).includes("多功能"))return"room-or";if(String(room).includes("419"))return"room-419";if(String(room).includes("420"))return"room-420";return"room-419"}
+function showCalendarDetail(caseNo,date){let x=data.find(item=>item.caseNo===caseNo),detail=$("#bookingCalendarDetail");if(!x||!detail)return;let rooms=normalizeRooms(x.rooms).join("、");detail.innerHTML=`<h3>${esc(date)} 借用資訊</h3><div class="summary">${summaryRow("借用時間",`${esc(x.startTime||"")} - ${esc(x.endTime||"")}`)}${summaryRow("場地",rooms||"-")}${summaryRow("申請單位",x.unit||x.applicant||"-")}${summaryRow("案件編號",x.caseNo||"-")}${summaryRow("目前狀態",normalizeStatus(x.status))}</div>`}
 function itemHtml(x){let status=normalizeStatus(x.status),rooms=normalizeRooms(x.rooms);return`<article class="item"><div><b>${esc(x.startDate||"-")}</b><br><span class="muted">${esc(x.startTime||"")}-${esc(x.endTime||"")}</span></div><div><b>${esc(x.caseNo||"")}</b> ${esc(x.purpose||"未命名活動")}<br><span class="muted">${esc(x.unit)}｜${esc(x.applicant)}｜${rooms.map(esc).join("、")}｜${x.people||0}人</span></div><span class="badge ${status}">${status}</span></article>`}
 function renderReviewCenter(){let list=$("#caseListPanel"),detail=$("#caseDetailPanel");if(!list||!detail)return;if(!data.length){list.innerHTML="<p class='muted'>目前沒有案件。</p>";detail.innerHTML="<p class='muted'>目前沒有可審核案件。</p>";return}let selected=data.find(x=>x.caseNo===selectedCaseNo)||data[0];selectedCaseNo=selected.caseNo;list.innerHTML=data.map(caseListItem).join("");detail.innerHTML=caseDetailHtml(selected);bindReviewCenter()}
 function caseListItem(x){let status=normalizeStatus(x.status);return`<button class="case-card ${x.caseNo===selectedCaseNo?"active":""}" data-select-case="${esc(x.caseNo)}"><strong>${esc(x.caseNo||"")}</strong><span class="case-meta">${esc(x.applicant||"-")}｜${esc(x.unit||"-")}</span><span class="case-meta">${esc(x.startDate||"-")}</span><span class="badge ${status}">${status}</span></button>`}
