@@ -31,6 +31,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
     <button data-view="availability">可預約日期</button>
     <button data-view="apply">我要申請</button>
     <button data-view="query">查詢申請進度</button>
+    <button data-view="loginView" id="frontLoginBtn">後台登入</button>
   </nav>
   <nav class="nav hide" id="adminNav">
     <h3>後台</h3>
@@ -509,6 +510,7 @@ function renderShell(){
  $("#frontNav").classList.toggle("hide",adminMode);
  $("#adminNav").classList.toggle("hide",!adminMode);
  $("#userMenu").classList.toggle("hide",!admin);
+ $("#frontLoginBtn").classList.toggle("hide",admin);
  $("#userMenuBtn").textContent=`👤 ${admin?"admin":"使用者"} ▼`;
  $("#goFrontBtn").classList.toggle("hide",!adminMode);
  $("#goAdminBtn").classList.toggle("hide",adminMode);
