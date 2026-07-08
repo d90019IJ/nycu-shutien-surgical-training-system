@@ -505,7 +505,14 @@ function normalizeList(value){if(Array.isArray(value))return value;if(!value)ret
 function isStatus(x,status){return normalizeStatus(x.status)===status}
 function ensureSelectedCase(){if(!data.length){selectedCaseNo="";return}if(!data.some(x=>x.caseNo===selectedCaseNo))selectedCaseNo=data[0].caseNo}
 function renderAll(){ensureSelectedCase();renderShell();renderMetrics();renderPending();renderReviewCenter();renderAdminCalendar();renderBookingCalendar();renderTables()}
-function renderShell(){$("#frontNav").classList.toggle("hide",adminMode);$("#adminNav").classList.toggle("hide",!adminMode);$("#userMenu").classList.toggle("hide",!admin);
+function renderShell(){
+ $("#frontNav").classList.toggle("hide",adminMode);
+ $("#adminNav").classList.toggle("hide",!adminMode);
+ $("#userMenu").classList.toggle("hide",!admin);
+ $("#userMenuBtn").textContent=`👤 ${admin?"admin":"使用者"} ▼`;
+ $("#goFrontBtn").classList.toggle("hide",!adminMode);
+ $("#goAdminBtn").classList.toggle("hide",adminMode);
+}
 function renderMetrics(){let approvedStatuses=["主任核准","待繳費","已繳費","活動完成","已結案"],approved=data.filter(x=>approvedStatuses.includes(normalizeStatus(x.status)));$("#mTotal").textContent=data.length;$("#mPending").textContent=data.filter(x=>["已送件","承辦審核中","待補件","補件完成"].includes(normalizeStatus(x.status))).length;$("#mApproved").textContent=approved.length;$("#mMoney").textContent=money(approved.reduce((s,x)=>s+(+x.amount||0),0))}
 async function renderAvailability(){let el=$("#availabilityList");if(!el)return;let start=$("#availabilityStart")?.value||today(),days=+($("#availabilityDays")?.value||14);el.innerHTML="<p class='muted'>讀取可預約日期中...</p>";try{let res=await api("availability",{startDate:start,days});if(!res.ok)throw new Error(res.error||"讀取失敗");el.innerHTML=(res.dates||[]).map(x=>{let d=new Date(x.date+"T00:00:00");return`<article class="item"><div><b>${esc(x.date)}</b><br><span class="muted">${weekday(d)}</span></div><div>${x.available?"目前可提出申請":"已有申請，請洽管理者確認"}</div><span class="badge ${x.available?"可申請":"已有申請"}">${esc(x.label)}</span></article>`}).join("")}catch(err){el.innerHTML=`<p class='muted'>無法讀取檔期：${esc(err.message)}</p>`}}
 function renderQueryResult(found){let el=$("#queryResult");el.classList.remove("hide");if(!found){el.innerHTML="<p>查無符合的申請資料，請確認案件編號與 Email 是否正確。</p>";return}el.innerHTML=`<h3>${esc(found.caseNo)}</h3><p><b>狀態：</b><span class="badge ${found.status}">${found.status}</span></p><p><b>使用日期：</b>${esc(found.startDate)} ${esc(found.startTime)}-${esc(found.endTime)}</p><p><b>申請目的：</b>${esc(found.purpose)}</p><p><b>試算 / 核定金額：</b>${money(found.amount)}</p><p><b>審核意見：</b>${esc(found.handlerOpinion||"尚無審核意見")}</p>`}
