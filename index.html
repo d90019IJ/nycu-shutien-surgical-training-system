@@ -479,8 +479,9 @@ function goApplyStep(delta){if(delta>0&&!validateCurrentStep())return;applyStep=
 function validateCurrentStep(){let fields=$$(`.form-step[data-step="${applyStep}"] input,.form-step[data-step="${applyStep}"] select,.form-step[data-step="${applyStep}"] textarea`).filter(el=>!el.disabled&&el.type!=="hidden");for(let el of fields){if(!el.checkValidity()){el.reportValidity();return false}}if(applyStep===2&&formData().rooms.length===0){toast("請至少選擇一個使用空間");return false}return true}
 function showApplyStep(){$$(".form-step").forEach(s=>s.classList.toggle("active",s.dataset.step==applyStep));$$("[data-step-dot]").forEach(s=>s.classList.toggle("active",s.dataset.stepDot==applyStep))}
 function needsDutyNotice(x){let start=toMinutes(formatTime(x.startTime)||"08:00"),end=toMinutes(formatTime(x.endTime)||"17:00");return x.offHours==="yes"||start<480||end>1020}
-function toMinutes(t){let [h,m]=String(formatTime(t)||"00:00").split(":").map(Number);return (h||0)*60+(m||0)}
-function formatTime(value){if(!value)return"";if(value instanceof Date&&!Number.isNaN(value.getTime()))return `${String(value.getHours()).padStart(2,"0")}:${String(value.getMinutes()).padStart(2,"0")}`;let s=String(value).trim(),m=s.match(/(\d{1,2}):(\d{2})/);if(m)return `${String(+m[1]).padStart(2,"0")}:${m[2]}`;let d=new Date(s);if(!Number.isNaN(d.getTime()))return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;return s}
+function toMinutes(t){let [h,m]=String(formatTime(t)||"00:00").split(":").map(Number);return (Number.isFinite(h)?h:0)*60+(Number.isFinite(m)?m:0)}
+function minutesToTime(total){total=((total%1440)+1440)%1440;let h=Math.floor(total/60),m=total%60;return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`}
+function formatTime(value){if(value===undefined||value===null||value==="")return"";if(value instanceof Date&&!Number.isNaN(value.getTime()))return `${String(value.getHours()).padStart(2,"0")}:${String(value.getMinutes()).padStart(2,"0")}`;if(typeof value==="number"&&Number.isFinite(value)&&value>=0&&value<1)return minutesToTime(Math.round(value*1440));let s=String(value).trim(),m=s.match(/(\d{1,2}):(\d{2})/);if(m)return `${String(+m[1]).padStart(2,"0")}:${m[2]}`;let n=Number(s);if(Number.isFinite(n)&&n>=0&&n<1)return minutesToTime(Math.round(n*1440));return""}
 function timeRange(start,end){let a=formatTime(start)||"-",b=formatTime(end)||"-";return `${a}–${b}`}
 function updateApplicationReview(){let x=formData(),c=calc(x);$("#estimate").textContent=money(c.total);$("#finalEstimate").textContent=money(c.total);renderFeeDetail("#feeDetail",c);renderFeeDetail("#finalFeeDetail",c);$("#offHoursNotice").classList.toggle("hide",!needsDutyNotice(x));renderApplicationSummary(x)}
 function renderFeeDetail(target,c){let el=$(target);if(!el)return;el.innerHTML=c.details.map(item=>`<div class="fee-line"><span>${esc(item.label)}<br><small>${esc(item.formula)}</small></span><b>${money(item.amount)}</b></div>`).join("")+`<div class="fee-line total"><span>預估總計</span><b>${money(c.total)}</b></div>`}
@@ -493,10 +494,14 @@ function renderApplicationSummary(x){let el=$("#applicationSummary");if(!el)retu
  ["使用空間",(x.rooms||[]).map(esc).join("、")||"未選擇"],
  ["預估人數",`${x.people||0} 人`],
  ["加選項目",extraLabels(x).join("、")||"無"],
- ["動物需求",x.animalNeed==="需要"?`${esc(x.animalType||"未填種類")}，${x.animalCount||0} 隻，${esc(x.animalWeight||"未填重量")}`:"不需要"],
+ ["動物需求",needsAnimal(x)?`${esc(animalTypeText(x))}，${esc(animalCountText(x))}，${esc(animalWeightText(x))}`:"不需要"],
  ["備註",esc(x.note||"無")]
 ].map(([k,v])=>`<div class="summary-row"><b>${k}</b><span>${v}</span></div>`).join("")+warning}
 function extraLabels(x){let labels=[];if(x.extras?.includes("protective"))labels.push("防護耗材");if(x.extras?.includes("anesthesia"))labels.push("麻醉");if(x.extras?.includes("gas"))labels.push("麻醉氣體");return labels}
+function needsAnimal(x){let s=String(x?.animalNeed||"不需要");return s.includes("需要")&&!s.includes("不需要")}
+function animalTypeText(x){return needsAnimal(x)?(x.animalType||"—"):"—"}
+function animalCountText(x){if(!needsAnimal(x))return"—";let n=Number(x.animalCount);return Number.isFinite(n)&&n>0?`${n} 隻`:"—"}
+function animalWeightText(x){return needsAnimal(x)?(x.animalWeight||"—"):"—"}
 async function api(action,payload={}){
  let res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...payload})});
  let text=await res.text();
@@ -672,7 +677,7 @@ function caseDetailHtml(x){let status=normalizeStatus(x.status),rooms=normalizeR
   <section class="detail-section"><h3>基本資料</h3>${kv("申請人",x.applicant)}${kv("申請單位",x.unit)}${kv("單位類別",x.unitType)}${kv("E-mail",x.email)}${kv("聯絡電話",x.phone)}${kv("申請目的",x.purpose)}</section>
   <section class="detail-section"><h3>借用資訊</h3>${kv("使用日期",`${x.startDate||""} 至 ${x.endDate||""}`)}${kv("使用時間",timeRange(x.startTime,x.endTime))}${kv("計價單位",halfDayLabel(x.periods||getHalfDayCount(x.startTime,x.endTime)))}${kv("預估人數",`${x.people||0} 人`)}${kv("假日/夜間",x.offHours==="yes"?"是，需要事前申請":"否")}</section>
   <section class="detail-section"><h3>場地</h3>${kv("使用空間",rooms.join("、")||"未填")}</section>
-  <section class="detail-section"><h3>動物需求</h3>${kv("是否需要",x.animalNeed||"不需要")}${kv("種類",x.animalType||"-")}${kv("數量",`${x.animalCount||0} 隻`)}${kv("重量",x.animalWeight||"-")}</section>
+  <section class="detail-section"><h3>動物需求</h3>${kv("是否需要",needsAnimal(x)?"需要":"不需要")}${kv("種類",animalTypeText(x))}${kv("數量",animalCountText(x))}${kv("重量",animalWeightText(x))}</section>
   <section class="detail-section"><h3>費用明細／核定金額</h3>${feeRows(c)}${billingRows(x,billing)}${amountDiff?`<div class="notice">⚠ 核定金額與系統試算不同，請確認是否為優惠或免收場地費。</div>`:""}</section>
   ${paymentInfoHtml(x,true)}
   ${cancelInfoHtml(x)}
