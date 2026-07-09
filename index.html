@@ -532,7 +532,7 @@ function animalWeightText(x){return needsAnimal(x)?(x.animalWeight||"—"):"—"
 async function api(action,payload={}){
  let res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...payload})});
  let text=await res.text();
- try{return JSON.parse(text)}catch(err){throw new Error("API 回傳格式不是 JSON，請確認 Apps Script 部署權限。")}
+ try{let json=JSON.parse(text);if(json.success===true&&json.ok===undefined)json.ok=true;return json}catch(err){throw new Error("API 回傳格式不是 JSON，請確認 Apps Script 部署權限。")}
 }
 async function ensureRequestedDatesAvailable(startDate,endDate){
  if(!startDate||!endDate)return{ok:false,message:"請先選擇使用開始日期與結束日期。"};
