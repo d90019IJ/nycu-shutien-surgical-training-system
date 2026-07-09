@@ -149,6 +149,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
   <label>是否假日/夜間或超出 08:00–17:00<select name="offHours"><option value="no">否</option><option value="yes">是，需要事前申請</option></select></label>
   <fieldset class="wide checks"><legend>參與對象</legend><label><input type="checkbox" name="audience" value="本校學生">本校學生</label><label><input type="checkbox" name="audience" value="校外人士">校外人士</label></fieldset>
   <div class="notice wide hide" id="offHoursNotice">超出平日 08:00–17:00 之使用需求，須事先申請，並依實際使用時間加收工作人員值班費。</div>
+  <div class="notice wide hide" id="bookingConflictNotice"></div>
   <div class="actions wide"><button type="button" class="ghost" data-prev-step>上一步</button><button type="button" class="primary" data-next-step>下一步</button></div>
 </section>
 <section class="form-step wide grid" data-step="3">
@@ -375,7 +376,7 @@ const applicationAttachmentItems=[
  {key:"parkingList",label:"停車名單"},
  {key:"otherAttachment",label:"其他附件"}
 ];
-const calendarVisibleStatuses=["主任核准","待繳費","已繳費","活動完成"];
+const calendarVisibleStatuses=["已送件","承辦審核中","待補件","補件完成","待主任核定","承辦修正中","待取消審核","主任核准","待繳費","已繳費","活動完成"];
 const applicationAttachmentAccept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,application/pdf,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 const remittanceProofAccept=".jpg,.jpeg,.png,image/jpeg,image/png";
 const remittanceProofMaxSize=1024*1024;
@@ -413,6 +414,8 @@ let calendarMonth=new Date();
 let frontCalendarMonth=new Date();
 let roomBlocks=loadRoomBlocks();
 let paymentRecords=loadPaymentRecords();
+let publicCalendarEvents=[];
+let applicationAvailabilityKey="";
 const pendingStatuses=["已送件","承辦審核中","待主任核定","承辦修正中","待補件","待取消審核"];
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 document.addEventListener("DOMContentLoaded",async()=>{bind();initDefaults();renderShell();await renderAvailability();if(admin&&adminMode){await refreshAdmin();show("dashboard")}else show("home");});
@@ -500,14 +503,14 @@ function calculateSetupFee(x){let qty=(x.rooms||[]).includes("多功能外科指
 function calculateDutyFee(x){return formula("工作人員值班費",0,0,0,"後台依實際使用時間核定")}
 function calculateTotal(parts){let total=parts.reduce((s,item)=>s+item.amount,0);return{base:parts.filter(p=>systemSettings.rooms[p.label]).reduce((s,p)=>s+p.amount,0),extra:parts.filter(p=>!systemSettings.rooms[p.label]).reduce((s,p)=>s+p.amount,0),total,details:parts}}
 function goApplyStep(delta){if(delta>0&&!validateCurrentStep())return;applyStep=Math.max(1,Math.min(4,applyStep+delta));showApplyStep();updateApplicationReview()}
-function validateCurrentStep(){let fields=$$(`.form-step[data-step="${applyStep}"] input,.form-step[data-step="${applyStep}"] select,.form-step[data-step="${applyStep}"] textarea`).filter(el=>!el.disabled&&el.type!=="hidden");for(let el of fields){if(!el.checkValidity()){el.reportValidity();return false}}if(applyStep===2&&formData().rooms.length===0){toast("請至少選擇一個使用空間");return false}return true}
+function validateCurrentStep(){let fields=$$(`.form-step[data-step="${applyStep}"] input,.form-step[data-step="${applyStep}"] select,.form-step[data-step="${applyStep}"] textarea`).filter(el=>!el.disabled&&el.type!=="hidden");for(let el of fields){if(!el.checkValidity()){el.reportValidity();return false}}if(applyStep===2){let x=formData();if(x.rooms.length===0){toast("請至少選擇一個使用空間");return false}let conflict=getBookingConflict(x);if(conflict){toast("此時段已有申請或場地不外借，請改選其他日期、時間或場地。");return false}}return true}
 function showApplyStep(){$$(".form-step").forEach(s=>s.classList.toggle("active",s.dataset.step==applyStep));$$("[data-step-dot]").forEach(s=>s.classList.toggle("active",s.dataset.stepDot==applyStep))}
 function needsDutyNotice(x){let start=toMinutes(formatTime(x.startTime)||"08:00"),end=toMinutes(formatTime(x.endTime)||"17:00");return x.offHours==="yes"||start<480||end>1020}
 function toMinutes(t){let [h,m]=String(formatTime(t)||"00:00").split(":").map(Number);return (Number.isFinite(h)?h:0)*60+(Number.isFinite(m)?m:0)}
 function minutesToTime(total){total=((total%1440)+1440)%1440;let h=Math.floor(total/60),m=total%60;return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`}
 function formatTime(value){if(value===undefined||value===null||value==="")return"";if(value instanceof Date&&!Number.isNaN(value.getTime()))return `${String(value.getHours()).padStart(2,"0")}:${String(value.getMinutes()).padStart(2,"0")}`;if(typeof value==="number"&&Number.isFinite(value)&&value>=0&&value<1)return minutesToTime(Math.round(value*1440));let s=String(value).trim(),m=s.match(/(\d{1,2}):(\d{2})/);if(m)return `${String(+m[1]).padStart(2,"0")}:${m[2]}`;let n=Number(s);if(Number.isFinite(n)&&n>=0&&n<1)return minutesToTime(Math.round(n*1440));return""}
 function timeRange(start,end){let a=formatTime(start)||"-",b=formatTime(end)||"-";return `${a}–${b}`}
-function updateApplicationReview(){let x=formData(),c=calc(x);$("#estimate").textContent=money(c.total);$("#finalEstimate").textContent=money(c.total);renderFeeDetail("#feeDetail",c);renderFeeDetail("#finalFeeDetail",c);$("#offHoursNotice").classList.toggle("hide",!needsDutyNotice(x));renderApplicationSummary(x)}
+function updateApplicationReview(){let x=formData(),c=calc(x);$("#estimate").textContent=money(c.total);$("#finalEstimate").textContent=money(c.total);renderFeeDetail("#feeDetail",c);renderFeeDetail("#finalFeeDetail",c);$("#offHoursNotice").classList.toggle("hide",!needsDutyNotice(x));syncApplicationAvailability(x);renderConflictNotice(x);renderApplicationSummary(x)}
 function renderFeeDetail(target,c){let el=$(target);if(!el)return;el.innerHTML=c.details.map(item=>`<div class="fee-line"><span>${esc(item.label)}<br><small>${esc(item.formula)}</small></span><b>${money(item.amount)}</b></div>`).join("")+`<div class="fee-line total"><span>預估總計</span><b>${money(c.total)}</b></div>`}
 function renderApplicationSummary(x){let el=$("#applicationSummary");if(!el)return;let warning=needsDutyNotice(x)?"<div class='notice'>超出平日 08:00–17:00 之使用需求，須事先申請，並依實際使用時間加收工作人員值班費。</div>":"";el.innerHTML=[
  ["申請單位",`${x.unitType||""} ${esc(x.unit||"")}`],
@@ -538,12 +541,16 @@ async function ensureRequestedDatesAvailable(startDate,endDate){
  let days=Math.floor((end-start)/86400000)+1;
  let res=await api("availability",{startDate,days});
  if(!res.ok)throw new Error(res.error||"無法確認場地預約狀態，請稍後再試。");
- let blocked=(res.dates||[]).filter(x=>!x.available);
- if(blocked.length)return{ok:false,message:`${blocked.map(x=>x.date).join("、")} 已有申請，請改選其他日期。`};
+ publicCalendarEvents=res.events||[];
  return{ok:true};
 }
+async function syncApplicationAvailability(x){if(admin||!x.startDate||!x.endDate||x.endDate<x.startDate)return;let key=`${x.startDate}|${x.endDate}`;if(key===applicationAvailabilityKey)return;applicationAvailabilityKey=key;try{let start=new Date(x.startDate+"T00:00:00"),end=new Date(x.endDate+"T00:00:00"),days=Math.floor((end-start)/86400000)+1;let res=await api("availability",{startDate:x.startDate,days});if(res.ok){publicCalendarEvents=res.events||[];renderConflictNotice(formData())}}catch(err){}}
 function requestedDates(startDate,endDate){let dates=[];if(!startDate||!endDate)return dates;let start=new Date(startDate+"T00:00:00"),end=new Date(endDate+"T00:00:00");for(let d=start;d<=end;d=new Date(d.getTime()+86400000))dates.push(fmtDate(d));return dates}
-function hasRoomBlockConflict(x){let start=toMinutes(x.startTime),end=toMinutes(x.endTime),dates=requestedDates(x.startDate,x.endDate);return roomBlocks.some(b=>dates.includes(b.date)&&(x.rooms||[]).includes(b.room)&&start<toMinutes(b.endTime)&&end>toMinutes(b.startTime))}
+function timeOverlaps(aStart,aEnd,bStart,bEnd){return toMinutes(aStart)<toMinutes(bEnd)&&toMinutes(aEnd)>toMinutes(bStart)}
+function eventConflictsRequest(x,ev){let rooms=x.rooms||[];return rooms.includes(ev.room)&&requestedDates(x.startDate,x.endDate).includes(ev.date)&&timeOverlaps(x.startTime,x.endTime,ev.startTime,ev.endTime)}
+function getBookingConflict(x){if(!x.startDate||!x.endDate||!x.startTime||!x.endTime||!(x.rooms||[]).length)return null;for(let date of requestedDates(x.startDate,x.endDate)){let found=buildCalendarEvents(date).find(ev=>eventConflictsRequest(x,ev));if(found)return found}return null}
+function renderConflictNotice(x){let el=$("#bookingConflictNotice");if(!el)return;let conflict=getBookingConflict(x);if(!conflict){el.classList.add("hide");el.textContent="";return}el.classList.remove("hide");let label=conflict.type==="block"?(conflict.reason||"場地不外借"):`${conflict.unit||"已有申請"}（${statusBadgeText(conflict.status)}）`;el.innerHTML=`此時段已有申請或場地不外借，請改選其他日期、時間或場地。<br>${esc(conflict.room)}｜${esc(timeRange(conflict.startTime,conflict.endTime))}｜${esc(label)}`}
+function hasRoomBlockConflict(x){return !!getBookingConflict(x)}
 async function submitApplication(e){
  e.preventDefault();
  let btn=e.submitter;
@@ -552,9 +559,9 @@ async function submitApplication(e){
   let x=formData();
   x.applicationAttachments=await collectApplicationAttachments();
   x.attachments=attachmentSummaryFromMap(x.applicationAttachments);
-  if(hasRoomBlockConflict(x))throw new Error("此時段已有校內活動或場地不外借，請改選其他日期或場地。");
   let available=await ensureRequestedDatesAvailable(x.startDate,x.endDate);
   if(!available.ok)throw new Error(available.message);
+  if(hasRoomBlockConflict(x))throw new Error("此時段已有申請、校內活動或場地不外借，請改選其他日期、時間或場地。");
   let res=await api("submitApplication",{application:x});
   if(!res.ok)throw new Error(res.error||"申請送出失敗");
   e.target.reset();
@@ -660,11 +667,12 @@ function renderShell(){
  $("#goAdminBtn").classList.toggle("hide",adminMode);
 }
 function renderMetrics(){let approvedStatuses=["主任核准","待繳費","已繳費","活動完成","已結案"],approved=data.filter(x=>approvedStatuses.includes(normalizeStatus(x.status)));$("#mTotal").textContent=data.length;$("#mPending").textContent=data.filter(x=>pendingStatuses.includes(normalizeStatus(x.status))).length;$("#mApproved").textContent=approved.length;$("#mMoney").textContent=money(approved.reduce((s,x)=>s+(+x.amount||0),0))}
-async function renderAvailability(){let grid=$("#frontCalendarGrid"),title=$("#frontCalendarTitle"),detail=$("#frontCalendarDetail");if(!grid||!title||!detail)return;if(admin)await refreshAdmin();let y=frontCalendarMonth.getFullYear(),m=frontCalendarMonth.getMonth();title.textContent=`${y} 年 ${m+1} 月`;let first=new Date(y,m,1),last=new Date(y,m+1,0),startDay=first.getDay(),days=last.getDate(),weekdays=["日","一","二","三","四","五","六"];let html=weekdays.map(d=>`<div class="cal-head">${d}</div>`).join("");for(let i=0;i<startDay;i++)html+=`<div class="cal-day empty"></div>`;for(let day=1;day<=days;day++){let iso=fmtDate(new Date(y,m,day)),events=buildCalendarEvents(iso);html+=`<div class="cal-day front-cal-day" data-front-date="${iso}"><div class="cal-date">${day}</div>${events.map(frontCalendarEventHtml).join("")}</div>`}grid.innerHTML=html;$$("[data-front-date]").forEach(el=>el.onclick=()=>showFrontDateDetail(el.dataset.frontDate));detail.innerHTML="<p class='muted'>點選日期查看各場地可借狀態。</p>"}
+async function renderAvailability(){let grid=$("#frontCalendarGrid"),title=$("#frontCalendarTitle"),detail=$("#frontCalendarDetail");if(!grid||!title||!detail)return;if(admin)await refreshAdmin();let y=frontCalendarMonth.getFullYear(),m=frontCalendarMonth.getMonth();let first=new Date(y,m,1),last=new Date(y,m+1,0),startDay=first.getDay(),days=last.getDate();if(!admin)await loadPublicCalendarEvents(fmtDate(first),days);title.textContent=`${y} 年 ${m+1} 月`;let weekdays=["日","一","二","三","四","五","六"];let html=weekdays.map(d=>`<div class="cal-head">${d}</div>`).join("");for(let i=0;i<startDay;i++)html+=`<div class="cal-day empty"></div>`;for(let day=1;day<=days;day++){let iso=fmtDate(new Date(y,m,day)),events=buildCalendarEvents(iso);html+=`<div class="cal-day front-cal-day" data-front-date="${iso}"><div class="cal-date">${day}</div>${events.map(frontCalendarEventHtml).join("")}</div>`}grid.innerHTML=html;$$("[data-front-date]").forEach(el=>el.onclick=()=>showFrontDateDetail(el.dataset.frontDate));detail.innerHTML="<p class='muted'>點選日期查看各場地可借狀態。</p>"}
 function renderQueryResult(found){let el=$("#queryResult");el.classList.remove("hide");if(!found){lastQueriedCase=null;el.innerHTML="<p>查無符合的申請資料，請確認案件編號與 Email 是否正確。</p>";return}lastQueriedCase=found;el.innerHTML=`<h3>${esc(found.caseNo)}</h3><p><b>狀態：</b><span class="badge ${normalizeStatus(found.status)}">${statusBadgeText(found.status)}</span></p><p><b>使用日期：</b>${esc(found.startDate)} ${esc(timeRange(found.startTime,found.endTime))}</p><p><b>申請目的：</b>${esc(found.purpose)}</p><p><b>試算 / 核定金額：</b>${money(found.amount)}</p><p><b>審核意見：</b>${esc(found.handlerOpinion||"尚無審核意見")}</p>${applicantCancelHtml(found)}${frontApplicationAttachmentsHtml(found)}${paymentInfoHtml(found)}`;bindPaymentControls()}
 function renderPending(){let rows=data.filter(x=>pendingStatuses.includes(normalizeStatus(x.status))).map(itemHtml).join("");$("#pendingList").innerHTML=rows||"<p class='muted'>目前沒有待處理案件。</p>"}
 function renderAdminCalendar(){let f=$("#statusFilter")?.value||"all";$("#adminCalendarList").innerHTML=data.filter(x=>f==="all"||isStatus(x,f)).map(itemHtml).join("")||"<p class='muted'>沒有符合條件的案件。</p>"}
-function buildCalendarEvents(iso){let caseEvents=data.filter(x=>calendarVisibleStatuses.includes(normalizeStatus(x.status))&&dateInRange(iso,x.startDate,x.endDate)).flatMap(x=>normalizeRooms(x.rooms).map(room=>({type:"case",caseNo:x.caseNo,date:iso,room,unit:x.unit||"已借用",applicant:x.applicant,startTime:x.startTime,endTime:x.endTime,status:normalizeStatus(x.status)})));let blockEvents=roomBlocks.filter(b=>b.date===iso).map(b=>({type:"block",id:b.id,date:iso,room:b.room,unit:b.reason||"場地不外借",startTime:b.startTime,endTime:b.endTime,reason:b.reason||"場地不外借",status:"場地不外借"}));return[...caseEvents,...blockEvents].sort((a,b)=>String(a.room).localeCompare(String(b.room),"zh-Hant")||toMinutes(a.startTime)-toMinutes(b.startTime))}
+async function loadPublicCalendarEvents(startDate,days){try{let res=await api("availability",{startDate,days});if(res.ok)publicCalendarEvents=res.events||[]}catch(err){publicCalendarEvents=[]}}
+function buildCalendarEvents(iso){let source=admin?data:publicCalendarEvents;let caseEvents=source.filter(x=>calendarVisibleStatuses.includes(normalizeStatus(x.status))&&dateInRange(iso,x.startDate,x.endDate)).flatMap(x=>normalizeRooms(x.rooms).map(room=>({type:"case",caseNo:x.caseNo,date:iso,room,unit:x.unit||"已借用",applicant:x.applicant,startTime:x.startTime,endTime:x.endTime,status:normalizeStatus(x.status)})));let blockEvents=roomBlocks.filter(b=>b.date===iso).map(b=>({type:"block",id:b.id,date:iso,room:b.room,unit:b.reason||"場地不外借",startTime:b.startTime,endTime:b.endTime,reason:b.reason||"場地不外借",status:"場地不外借"}));return[...caseEvents,...blockEvents].sort((a,b)=>String(a.room).localeCompare(String(b.room),"zh-Hant")||toMinutes(a.startTime)-toMinutes(b.startTime))}
 function frontCalendarEventHtml(ev){if(ev.type==="block")return`<div class="cal-event block-event"><b>🟧 ${esc(ev.reason||"場地不外借")}</b></div>`;return`<div class="cal-event ${roomClass(ev.room)}"><b>${roomShortLabel(ev.room)}｜${esc(ev.unit||"已借用")}</b></div>`}
 function showFrontDateDetail(iso){let el=$("#frontCalendarDetail");if(!el)return;let rows=Object.keys(systemSettings.rooms).map(room=>frontRoomStatusHtml(iso,room)).join("");el.innerHTML=`<h3>${esc(displayDate(iso))}</h3><div class="summary">${rows}</div>`}
 function frontRoomStatusHtml(iso,room){let entries=buildCalendarEvents(iso).filter(ev=>ev.room===room).map(ev=>({title:ev.type==="block"?ev.reason:ev.unit,time:timeRange(ev.startTime,ev.endTime),status:"不可借用"}));if(!entries.length)return`<div class="summary-row"><b>${esc(room)}</b><span>可借用</span></div>`;return`<div class="summary-row"><b>${esc(room)}</b><span>${entries.map(e=>`${esc(e.title)}<br>${esc(e.time)}<br><b>${esc(e.status)}</b>`).join("<hr>")}</span></div>`}
