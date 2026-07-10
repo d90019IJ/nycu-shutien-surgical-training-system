@@ -86,7 +86,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
         <h3>場地費</h3>
       </div>
       <div class="panel price" id="extraPriceList">
-        <h3>加選項目</h3>
+        <h3>耗材項目</h3>
       </div>
     </div>
   </section>
@@ -123,7 +123,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
 <div class="stepper" id="applyStepper">
   <div class="step-dot active" data-step-dot="1">Step 1<br><span class="muted">基本資料</span></div>
   <div class="step-dot" data-step-dot="2">Step 2<br><span class="muted">借用資訊</span></div>
-  <div class="step-dot" data-step-dot="3">Step 3<br><span class="muted">加選與費用</span></div>
+  <div class="step-dot" data-step-dot="3">Step 3<br><span class="muted">耗材費</span></div>
   <div class="step-dot" data-step-dot="4">Step 4<br><span class="muted">確認送出</span></div>
 </div>
 <form id="form" class="grid">
@@ -153,7 +153,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
   <div class="actions wide"><button type="button" class="ghost" data-prev-step>上一步</button><button type="button" class="primary" data-next-step>下一步</button></div>
 </section>
 <section class="form-step wide grid" data-step="3">
-  <fieldset class="wide checks"><legend>加選項目</legend><label><input type="checkbox" name="extras" value="protective">防護耗材</label><label><input type="checkbox" name="extras" value="anesthesia">麻醉</label><label><input type="checkbox" name="extras" value="gas">麻醉氣體</label></fieldset>
+  <fieldset class="wide checks" id="consumableOptions"><legend>耗材項目</legend></fieldset>
   <fieldset class="wide checks"><legend>動物需求</legend><label><input type="radio" name="animalNeed" value="不需要" checked>不需要</label><label><input type="radio" name="animalNeed" value="需要">需要</label><label>種類<input name="animalType"></label><label>數量<input type="number" name="animalCount" min="0" value="0"></label><label>重量<input name="animalWeight"></label></fieldset>
   <label class="wide">備註<textarea name="note" rows="3" placeholder="請補充特殊需求、設備或注意事項"></textarea></label>
   <div class="estimate wide"><div><span>費用明細</span><strong id="estimate">NT$ 0</strong></div><div id="feeDetail" class="fee-detail"></div><span class="muted">清潔費與手術室場地設定費會依使用空間自動計算；值班費第一版先提醒，後台再依實際使用時間核定。</span></div>
@@ -303,6 +303,11 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
         <div class="grid" id="venueStatusSettings"></div>
       </section>
       <section class="detail-section wide">
+        <h3>耗材項目管理</h3>
+        <p class="muted">管理前台 Step 3 顯示的耗材名稱、說明、單價與是否啟用。</p>
+        <div class="grid" id="consumableSettings"></div>
+      </section>
+      <section class="detail-section wide">
         <h3>場地介紹管理</h3>
         <p class="muted">管理前台「場地介紹」頁面的文字內容與場地圖片。</p>
         <div id="venueIntroSettings" class="venue-list"></div>
@@ -356,6 +361,12 @@ const defaultSettings={
  },
  fees:{protective:800,anesthesia:2500,gas:3000,setup:1000}
 };
+const consumableKeyMap={personalProtectiveSupplies:"protective",anestheticDrug:"anesthesia",insufflationGas:"gas",protective:"protective",anesthesia:"anesthesia",gas:"gas"};
+const defaultConsumableSettings=[
+ {itemId:"personalProtectiveSupplies",legacyKey:"protective",itemName:"個人防護耗材",description:"",price:800,unit:"人",displayOrder:1,isEnabled:true,updatedAt:"",updatedBy:"系統"},
+ {itemId:"anestheticDrug",legacyKey:"anesthesia",itemName:"麻藥",description:"",price:2500,unit:"隻",displayOrder:2,isEnabled:true,updatedAt:"",updatedBy:"系統"},
+ {itemId:"insufflationGas",legacyKey:"gas",itemName:"氣腹氣體",description:"適用於腹腔鏡或達文西手術，OPEN 手術通常不需使用。",price:3000,unit:"隻",displayOrder:3,isEnabled:true,updatedAt:"",updatedBy:"系統"}
+];
 const venueIds=["operatingRoom","classroom419","classroom420"];
 const defaultVenueSettings=[
  {venueId:"operatingRoom",venueName:"多功能外科指導手術室",shortName:"手術室",description:"適合外科訓練、示範教學與分組實作。",capacity:"",location:"",equipment:"",notices:"",feeDescription:"基本場地費 NT$ 15,000 / 半天（4 小時內）",displayOrder:1,isVisible:true,images:[],updatedAt:"",updatedBy:"系統"},
@@ -425,6 +436,7 @@ let publicCalendarEvents=[];
 let applicationAvailabilityKey="";
 let pendingApplicationAttachmentFiles={};
 let venueSettings=[...defaultVenueSettings];
+let consumableSettings=[...defaultConsumableSettings];
 const pendingStatuses=["已送件","承辦審核中","待主任核定","承辦修正中","待補件","待取消審核"];
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 document.addEventListener("DOMContentLoaded",async()=>{bind();initDefaults();renderShell();await renderAvailability();if(admin&&adminMode){await refreshAdmin();show("dashboard")}else show("home");});
@@ -460,17 +472,28 @@ function bind(){
  $("#blockForm").onsubmit=addRoomBlock;
  document.addEventListener("click",e=>{if(!$("#userMenu").contains(e.target))$("#userMenuList").classList.add("hide")});
 }
-function initDefaults(){let d=today();$$('input[name="applyDate"],#blockForm input[name="date"]').forEach(el=>{if(!el.value)el.value=d});renderPricing();renderRoomOptions();renderApplicationAttachmentFields();renderVenueIntro();showApplyStep();updateApplicationReview();renderBlockList();loadVenueSettings()}
-async function show(id){if(isAdminView(id)&&(!admin||!adminMode))id=admin?"home":"loginView";$$(".view").forEach(v=>v.classList.toggle("active",v.id===id));$$(".nav button").forEach(b=>b.classList.toggle("active",(b.dataset.view||b.dataset.viewBtn)===id));renderShell();if(id==="venue"){await loadVenueSettings();renderVenueIntro()}if(id==="availability")await renderAvailability();if(id==="pricing")renderPricing();if(id==="apply"){renderRoomOptions();updateApplicationReview()}if(id==="settings"){await loadVenueSettings();renderSettings()}if(isAdminView(id)){await refreshAdmin();renderAll();if(id==="bookingCalendar"){renderBookingCalendar();renderBlockList()}}}
+function initDefaults(){let d=today();$$('input[name="applyDate"],#blockForm input[name="date"]').forEach(el=>{if(!el.value)el.value=d});renderConsumableOptions();renderPricing();renderRoomOptions();renderApplicationAttachmentFields();renderVenueIntro();showApplyStep();updateApplicationReview();renderBlockList();loadVenueSettings();loadConsumableSettings()}
+async function show(id){if(isAdminView(id)&&(!admin||!adminMode))id=admin?"home":"loginView";$$(".view").forEach(v=>v.classList.toggle("active",v.id===id));$$(".nav button").forEach(b=>b.classList.toggle("active",(b.dataset.view||b.dataset.viewBtn)===id));renderShell();if(id==="venue"){await loadVenueSettings();renderVenueIntro()}if(id==="availability")await renderAvailability();if(id==="pricing"){await loadConsumableSettings();renderPricing()}if(id==="apply"){await loadConsumableSettings();renderConsumableOptions();renderRoomOptions();updateApplicationReview()}if(id==="settings"){await Promise.all([loadVenueSettings(),loadConsumableSettings()]);renderSettings()}if(isAdminView(id)){await refreshAdmin();renderAll();if(id==="bookingCalendar"){renderBookingCalendar();renderBlockList()}}}
 function isAdminView(id){return ["dashboard","pending","allCases","adminCalendar","bookingCalendar","export","settings"].includes(id)}
 function loadSettings(){try{return mergeSettings(JSON.parse(localStorage.getItem(SK)||"{}"))}catch{return mergeSettings({})}}
 function mergeSettings(saved){let merged=JSON.parse(JSON.stringify(defaultSettings));Object.keys(saved.rooms||{}).forEach(name=>merged.rooms[name]={...(merged.rooms[name]||{}),...saved.rooms[name]});merged.fees={...merged.fees,...(saved.fees||{})};return merged}
 function persistSettings(){localStorage.setItem(SK,JSON.stringify(systemSettings))}
-function renderPricing(){let venue=$("#venuePriceList"),extra=$("#extraPriceList");if(!venue||!extra)return;venue.innerHTML="<h3>場地費</h3>"+Object.entries(systemSettings.rooms).map(([name,r])=>`<div class="price-row"><span>${esc(r.label||name)}${r.available?"":"（暫停借用）"}</span><b>${money(r.rate)} / 半天（4 小時內）</b></div>`).join("");extra.innerHTML=`<h3>加選項目</h3><div class="price-row"><span>手術基本防護耗材費</span><b>${money(systemSettings.fees.protective)} / 人</b></div><div class="price-row"><span>麻醉費</span><b>${money(systemSettings.fees.anesthesia)} / 隻</b></div><div class="price-row"><span>麻醉氣體使用費</span><b>${money(systemSettings.fees.gas)} / 隻</b></div><div class="price-row"><span>場地設定費</span><b>${money(systemSettings.fees.setup)} / 半天（4 小時內）</b></div>${Object.entries(systemSettings.rooms).map(([name,r])=>`<div class="price-row"><span>${esc(cleaningLabel(name))}</span><b>${money(r.cleaning)} / 次</b></div>`).join("")}`}
+function normalizeConsumableItem(item,index=0){let legacyKey=consumableKeyMap[item.legacyKey]||consumableKeyMap[item.itemId]||item.legacyKey||item.itemId;let fallback=defaultConsumableSettings.find(x=>x.legacyKey===legacyKey)||defaultConsumableSettings[index]||defaultConsumableSettings[0];return{...fallback,...item,legacyKey,itemId:item.itemId||fallback.itemId,itemName:item.itemName||fallback.itemName,description:item.description??fallback.description,price:+(item.price??systemSettings.fees[legacyKey]??fallback.price)||0,unit:item.unit||fallback.unit,displayOrder:+(item.displayOrder??fallback.displayOrder)||index+1,isEnabled:boolValue(item.isEnabled,true)}}
+function normalizeConsumables(list){let source=Array.isArray(list)&&list.length?list:defaultConsumableSettings;let items=source.map((item,i)=>normalizeConsumableItem(item,i)).sort((a,b)=>(+a.displayOrder||0)-(+b.displayOrder||0));items.forEach(item=>{if(item.legacyKey&&systemSettings.fees[item.legacyKey]!==undefined)systemSettings.fees[item.legacyKey]=+item.price||0});return items}
+function enabledConsumables(){return normalizeConsumables(consumableSettings).filter(item=>item.isEnabled!==false)}
+function consumableByLegacyKey(key){let legacy=consumableKeyMap[key]||key;return normalizeConsumables(consumableSettings).find(item=>item.legacyKey===legacy)||defaultConsumableSettings.find(item=>item.legacyKey===legacy)}
+function consumableLabel(key){return consumableByLegacyKey(key)?.itemName||key}
+function consumableDescription(key){return consumableByLegacyKey(key)?.description||""}
+function consumableUnit(key){return consumableByLegacyKey(key)?.unit||""}
+async function loadConsumableSettings(){try{let res=await api("getConsumableSettings",{all:admin&&adminMode,adminToken:admin&&adminMode?adminToken:""});if(res&&!Array.isArray(res)&&res.ok===false)throw new Error(res.message||res.error||"耗材設定載入失敗");let items=Array.isArray(res)?res:Array.isArray(res?.data)?res.data:Array.isArray(res?.items)?res.items:[];consumableSettings=normalizeConsumables(items.length?items:defaultConsumableSettings);renderConsumableOptions();return consumableSettings}catch(err){console.error("[loadConsumableSettings] failed:",err);consumableSettings=normalizeConsumables(consumableSettings);renderConsumableOptions();return consumableSettings}}
+function renderConsumableOptions(){let el=$("#consumableOptions");if(!el)return;el.innerHTML="<legend>耗材項目</legend>"+enabledConsumables().map(item=>`<label><input type="checkbox" name="extras" value="${esc(item.legacyKey)}">${esc(item.itemName)}${item.description?`<span class="muted">${esc(item.description)}</span>`:""}</label>`).join("")}
+function renderConsumableSettings(){let el=$("#consumableSettings");if(!el)return;el.innerHTML=normalizeConsumables(consumableSettings).map(item=>`<section class="venue-admin-card wide" data-consumable-card="${esc(item.itemId)}"><div class="grid"><label>itemId<input data-consumable-field="itemId" data-consumable-id="${esc(item.itemId)}" value="${esc(item.itemId)}" readonly></label><label>品項名稱<input data-consumable-field="itemName" data-consumable-id="${esc(item.itemId)}" value="${esc(item.itemName)}"></label><label>單價<input type="number" min="0" data-consumable-field="price" data-consumable-id="${esc(item.itemId)}" value="${esc(item.price)}"></label><label>單位<input data-consumable-field="unit" data-consumable-id="${esc(item.itemId)}" value="${esc(item.unit)}"></label><label>顯示順序<input type="number" data-consumable-field="displayOrder" data-consumable-id="${esc(item.itemId)}" value="${esc(item.displayOrder)}"></label><label>是否啟用<select data-consumable-field="isEnabled" data-consumable-id="${esc(item.itemId)}"><option value="true" ${item.isEnabled!==false?"selected":""}>啟用</option><option value="false" ${item.isEnabled===false?"selected":""}>停用</option></select></label><label class="wide">說明<textarea rows="2" data-consumable-field="description" data-consumable-id="${esc(item.itemId)}">${esc(item.description||"")}</textarea></label></div></section>`).join("")}
+function collectConsumables(){return normalizeConsumables(consumableSettings).map(item=>{let next={...item};$$(`[data-consumable-id="${CSS.escape(item.itemId)}"]`).forEach(el=>{let key=el.dataset.consumableField;if(!key)return;next[key]=key==="price"||key==="displayOrder"?(+el.value||0):key==="isEnabled"?el.value==="true":el.value});next.legacyKey=consumableKeyMap[next.itemId]||next.legacyKey;return next})}
+function renderPricing(){let venue=$("#venuePriceList"),extra=$("#extraPriceList");if(!venue||!extra)return;venue.innerHTML="<h3>場地費</h3>"+Object.entries(systemSettings.rooms).map(([name,r])=>`<div class="price-row"><span>${esc(r.label||name)}${r.available?"":"（暫停借用）"}</span><b>${money(r.rate)} / 半天（4 小時內）</b></div>`).join("");extra.innerHTML=`<h3>耗材項目</h3>${enabledConsumables().map(item=>`<div class="price-row"><span>${esc(item.itemName)}${item.description?`<br><small class="muted">${esc(item.description)}</small>`:""}</span><b>${money(item.price)} / ${esc(item.unit)}</b></div>`).join("")}<div class="price-row"><span>場地設定費</span><b>${money(systemSettings.fees.setup)} / 半天（4 小時內）</b></div>${Object.entries(systemSettings.rooms).map(([name,r])=>`<div class="price-row"><span>${esc(cleaningLabel(name))}</span><b>${money(r.cleaning)} / 次</b></div>`).join("")}`}
 function renderRoomOptions(){let box=$("#roomOptions");if(!box)return;box.innerHTML="<legend>使用空間</legend>"+Object.entries(systemSettings.rooms).map(([name,r])=>`<label><input type="checkbox" name="rooms" value="${esc(name)}" ${r.available?"":"disabled"}>${esc(r.label||name)}${r.available?"":"（暫停借用）"}</label>`).join("")}
-function renderSettings(){let rates=$("#rateSettings"),statuses=$("#venueStatusSettings");if(!rates||!statuses)return;rates.innerHTML=Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(r.label||name)} / 半天（4 小時內）<input type="number" min="0" data-rate="${esc(name)}" value="${r.rate}"></label><label>${esc(cleaningLabel(name))} / 次<input type="number" min="0" data-cleaning="${esc(name)}" value="${r.cleaning}"></label>`).join("")+`<label>手術基本防護耗材費 / 人<input type="number" min="0" data-fee="protective" value="${systemSettings.fees.protective}"></label><label>麻醉費 / 隻<input type="number" min="0" data-fee="anesthesia" value="${systemSettings.fees.anesthesia}"></label><label>麻醉氣體使用費 / 隻<input type="number" min="0" data-fee="gas" value="${systemSettings.fees.gas}"></label><label>場地設定費 / 半天（4 小時內）<input type="number" min="0" data-fee="setup" value="${systemSettings.fees.setup}"></label>`;statuses.innerHTML=Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(r.label||name)}<select data-available="${esc(name)}"><option value="true" ${r.available?"selected":""}>可借用</option><option value="false" ${!r.available?"selected":""}>暫停借用</option></select></label>`).join("");renderVenueIntroSettings()}
+function renderSettings(){let rates=$("#rateSettings"),statuses=$("#venueStatusSettings");if(!rates||!statuses)return;rates.innerHTML=Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(r.label||name)} / 半天（4 小時內）<input type="number" min="0" data-rate="${esc(name)}" value="${r.rate}"></label><label>${esc(cleaningLabel(name))} / 次<input type="number" min="0" data-cleaning="${esc(name)}" value="${r.cleaning}"></label>`).join("")+`<label>場地設定費 / 半天（4 小時內）<input type="number" min="0" data-fee="setup" value="${systemSettings.fees.setup}"></label>`;statuses.innerHTML=Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(r.label||name)}<select data-available="${esc(name)}"><option value="true" ${r.available?"selected":""}>可借用</option><option value="false" ${!r.available?"selected":""}>暫停借用</option></select></label>`).join("");renderConsumableSettings();renderVenueIntroSettings()}
 function cleaningLabel(name){return name==="多功能外科指導手術室"?"手術室清潔費":`${name}清潔費`}
-function saveSystemSettings(){$$("[data-rate]").forEach(el=>systemSettings.rooms[el.dataset.rate].rate=+el.value||0);$$("[data-cleaning]").forEach(el=>systemSettings.rooms[el.dataset.cleaning].cleaning=+el.value||0);$$("[data-fee]").forEach(el=>systemSettings.fees[el.dataset.fee]=+el.value||0);$$("[data-available]").forEach(el=>systemSettings.rooms[el.dataset.available].available=el.value==="true");persistSettings();renderPricing();renderRoomOptions();updateApplicationReview();renderSettings();toast("系統設定已儲存")}
+async function saveSystemSettings(){$$("[data-rate]").forEach(el=>systemSettings.rooms[el.dataset.rate].rate=+el.value||0);$$("[data-cleaning]").forEach(el=>systemSettings.rooms[el.dataset.cleaning].cleaning=+el.value||0);$$("[data-fee]").forEach(el=>systemSettings.fees[el.dataset.fee]=+el.value||0);$$("[data-available]").forEach(el=>systemSettings.rooms[el.dataset.available].available=el.value==="true");consumableSettings=normalizeConsumables(collectConsumables());consumableSettings.forEach(item=>{if(item.legacyKey)systemSettings.fees[item.legacyKey]=+item.price||0});persistSettings();try{let res=await api("saveConsumableSettings",{adminToken,items:consumableSettings,actor:"後台管理者"});if(res.ok)consumableSettings=normalizeConsumables(res.items||res.data||consumableSettings);else console.error("[saveConsumableSettings] failed:",res)}catch(err){console.error("[saveConsumableSettings] failed:",err)}renderConsumableOptions();renderPricing();renderRoomOptions();updateApplicationReview();renderSettings();toast("系統設定已儲存")}
 function resetSystemSettings(){systemSettings=JSON.parse(JSON.stringify(defaultSettings));persistSettings();renderPricing();renderRoomOptions();updateApplicationReview();renderSettings();toast("已回復預設值")}
 function boolValue(value,defaultValue=true){if(value===undefined||value===null||value==="")return defaultValue;if(value===true||value===1)return true;let s=String(value).trim().toLowerCase();return["true","1","yes","y","是","顯示"].includes(s)}
 function normalizeVenueImagesFront(v){let images=Array.isArray(v.images)?v.images:[];if(!images.length&&v.imagesJson){try{images=JSON.parse(v.imagesJson)||[]}catch{images=[]}}return images}
@@ -506,7 +529,7 @@ function isOnsitePayment(method){return normalizePaymentMethod(method)==="現場
 function addRoomBlock(e){e.preventDefault();let f=new FormData(e.target),block={id:String(Date.now()),date:f.get("date"),room:f.get("room"),startTime:f.get("startTime"),endTime:f.get("endTime"),reason:f.get("reason")};if(toMinutes(block.endTime)<=toMinutes(block.startTime)){toast("結束時間需晚於開始時間");return}roomBlocks=[...roomBlocks,block];saveRoomBlocks();renderBlockList();renderAvailability();renderBookingCalendar();e.target.reset();e.target.elements.date.value=today();e.target.elements.startTime.value="08:00";e.target.elements.endTime.value="12:00";toast("已新增場地不外借")}
 function removeRoomBlock(id){roomBlocks=roomBlocks.filter(b=>b.id!==id);saveRoomBlocks();renderBlockList();renderAvailability();renderBookingCalendar();toast("已刪除場地不外借")}
 function renderBlockList(){let el=$("#blockList");if(!el)return;let rows=[...roomBlocks].sort((a,b)=>(a.date+a.startTime).localeCompare(b.date+b.startTime)).map(b=>`<article class="item"><div><b>${esc(displayDate(b.date))}</b><br><span class="muted">${esc(timeRange(b.startTime,b.endTime))}</span></div><div><b>${esc(b.room)}</b><br><span class="muted">🟧 ${esc(b.reason)}</span></div><button class="ghost danger" type="button" data-remove-block="${esc(b.id)}">刪除</button></article>`).join("");el.innerHTML=rows||"<p class='muted'>目前沒有場地不外借資料。</p>";$$("[data-remove-block]").forEach(btn=>btn.onclick=()=>removeRoomBlock(btn.dataset.removeBlock))}
-function formData(){let f=new FormData($("#form"));let x={unitType:f.get("unitType"),unit:f.get("unit"),applicant:f.get("applicant"),applyDate:f.get("applyDate")||today(),email:f.get("email"),phone:f.get("phone"),purpose:f.get("purpose"),audience:f.getAll("audience"),people:+f.get("people")||0,startDate:f.get("startDate"),endDate:f.get("endDate"),startTime:f.get("startTime"),endTime:f.get("endTime"),periods:getHalfDayCount(f.get("startTime"),f.get("endTime")),offHours:f.get("offHours"),animalNeed:f.get("animalNeed"),animalType:f.get("animalType"),animalCount:+f.get("animalCount")||0,animalWeight:f.get("animalWeight"),rooms:f.getAll("rooms"),extras:f.getAll("extras"),attachments:f.get("attachments"),note:f.get("note")};let c=calc(x);x.estimatedAmount=c.total;x.offHoursNotice=needsDutyNotice(x);return x}
+function formData(){let f=new FormData($("#form"));let x={unitType:f.get("unitType"),unit:f.get("unit"),applicant:f.get("applicant"),applyDate:f.get("applyDate")||today(),email:f.get("email"),phone:f.get("phone"),purpose:f.get("purpose"),audience:f.getAll("audience"),people:+f.get("people")||0,startDate:f.get("startDate"),endDate:f.get("endDate"),startTime:f.get("startTime"),endTime:f.get("endTime"),periods:getHalfDayCount(f.get("startTime"),f.get("endTime")),offHours:f.get("offHours"),animalNeed:f.get("animalNeed"),animalType:f.get("animalType"),animalCount:+f.get("animalCount")||0,animalWeight:f.get("animalWeight"),rooms:f.getAll("rooms"),extras:normalizeExtras(f.getAll("extras")),attachments:f.get("attachments"),note:f.get("note")};let c=calc(x);x.estimatedAmount=c.total;x.offHoursNotice=needsDutyNotice(x);return x}
 function renderApplicationAttachmentFields(){let el=$("#applicationAttachmentFields");if(!el)return;el.innerHTML=applicationAttachmentItems.map(item=>`<div class="summary-row"><b>${esc(item.label)}</b><span><div class="actions"><label class="agree"><input type="radio" name="attachmentStatus-${item.key}" value="uploaded">已上傳附件</label><label class="agree"><input type="radio" name="attachmentStatus-${item.key}" value="pending" checked>附件後補</label></div><input type="file" accept="${applicationAttachmentAccept}" data-application-attach="${item.key}"></span></div>`).join("")}
 function readFileBase64(file){return new Promise((resolve,reject)=>{if(!file){resolve("");return}if(file.size>attachmentMaxSize){reject(new Error("檔案過大，請壓縮後重新上傳。"));return}let reader=new FileReader();reader.onload=()=>resolve(String(reader.result||"").split(",").pop());reader.onerror=()=>reject(new Error("附件讀取失敗"));reader.readAsDataURL(file)})}
 async function collectApplicationAttachments(){let result={};pendingApplicationAttachmentFiles={};for(const item of applicationAttachmentItems){let status=$(`input[name="attachmentStatus-${item.key}"]:checked`)?.value||"uploaded",input=$(`[data-application-attach="${item.key}"]`),file=input?.files?.[0]||null;if(status==="uploaded"&&!file)throw new Error(`請上傳${item.label}，或改選附件後補。`);if(status==="uploaded"&&file){if(!validateAttachmentFile(item.key,file))throw new Error("檔案過大，請壓縮後重新上傳。");pendingApplicationAttachmentFiles[item.key]=file;result[item.key]={status:"pending",label:item.label,uploadedBy:"申請者",uploadedAt:""}}else{result[item.key]={status:"pending",label:item.label,uploadedBy:"申請者",uploadedAt:""}}}return result}
@@ -528,9 +551,9 @@ function halfDayLabel(count){return count>1?"全天":"半天"}
 function formula(label,unit,qty,amount,note){return{label,unit,qty,amount,note:note||"",formula:`${money(unit)} × ${qty}${note?`（${note}）`:""} ＝ ${money(amount)}`}}
 function calculateRoomFee(x){let count=getHalfDayCount(x.startTime,x.endTime);return(x.rooms||[]).map(room=>{let unit=systemSettings.rooms[room]?.rate||0,amount=Math.round(unit*count);return formula(room,unit,count,amount,halfDayLabel(count))})}
 function calculateCleaningFee(x){return(x.rooms||[]).map(room=>{let unit=systemSettings.rooms[room]?.cleaning||0;return formula(`${cleaningLabel(room)}`,unit,1,unit,"1 次")})}
-function calculateProtectiveFee(x){let qty=x.extras?.includes("protective")?(x.people||0):0,unit=systemSettings.fees.protective;return formula("防護耗材費",unit,qty,unit*qty,"人")}
-function calculateAnesthesiaFee(x){let qty=x.extras?.includes("anesthesia")?(x.animalCount||0):0,unit=systemSettings.fees.anesthesia;return formula("麻醉費",unit,qty,unit*qty,"隻")}
-function calculateGasFee(x){let qty=x.extras?.includes("gas")?(x.animalCount||0):0,unit=systemSettings.fees.gas;return formula("麻醉氣體費",unit,qty,unit*qty,"隻")}
+function calculateProtectiveFee(x){let qty=x.extras?.includes("protective")?(x.people||0):0,unit=systemSettings.fees.protective,item=consumableByLegacyKey("protective");return formula(item?.itemName||"個人防護耗材",unit,qty,unit*qty,item?.unit||"人")}
+function calculateAnesthesiaFee(x){let qty=x.extras?.includes("anesthesia")?(x.animalCount||0):0,unit=systemSettings.fees.anesthesia,item=consumableByLegacyKey("anesthesia");return formula(item?.itemName||"麻藥",unit,qty,unit*qty,item?.unit||"隻")}
+function calculateGasFee(x){let qty=x.extras?.includes("gas")?(x.animalCount||0):0,unit=systemSettings.fees.gas,item=consumableByLegacyKey("gas");return formula(item?.itemName||"氣腹氣體",unit,qty,unit*qty,item?.unit||"隻")}
 function calculateSetupFee(x){let qty=(x.rooms||[]).includes("多功能外科指導手術室")?getHalfDayCount(x.startTime,x.endTime):0,unit=systemSettings.fees.setup;return formula("場地設定費",unit,qty,unit*qty,halfDayLabel(qty))}
 function calculateDutyFee(x){return formula("工作人員值班費",0,0,0,"後台依實際使用時間核定")}
 function calculateTotal(parts){let total=parts.reduce((s,item)=>s+item.amount,0);return{base:parts.filter(p=>systemSettings.rooms[p.label]).reduce((s,p)=>s+p.amount,0),extra:parts.filter(p=>!systemSettings.rooms[p.label]).reduce((s,p)=>s+p.amount,0),total,details:parts}}
@@ -552,11 +575,13 @@ function renderApplicationSummary(x){let el=$("#applicationSummary");if(!el)retu
  ["使用時間",`${esc(timeRange(x.startTime,x.endTime))}，${halfDayLabel(x.periods||getHalfDayCount(x.startTime,x.endTime))}`],
  ["使用空間",(x.rooms||[]).map(esc).join("、")||"未選擇"],
  ["預估人數",`${x.people||0} 人`],
- ["加選項目",extraLabels(x).join("、")||"無"],
+ ["耗材項目",extraLabels(x).join("、")||"無"],
  ["動物需求",needsAnimal(x)?`${esc(animalTypeText(x))}，${esc(animalCountText(x))}，${esc(animalWeightText(x))}`:"不需要"],
  ["備註",esc(x.note||"無")]
 ].map(([k,v])=>`<div class="summary-row"><b>${k}</b><span>${v}</span></div>`).join("")+warning}
-function extraLabels(x){let labels=[];if(x.extras?.includes("protective"))labels.push("防護耗材");if(x.extras?.includes("anesthesia"))labels.push("麻醉");if(x.extras?.includes("gas"))labels.push("麻醉氣體");return labels}
+function normalizeExtraKey(key){let s=String(key||"").trim();if(s==="防護耗材"||s==="手術基本防護耗材費"||s==="個人防護耗材")return"protective";if(s==="麻醉"||s==="麻醉費"||s==="麻藥")return"anesthesia";if(s==="麻醉氣體"||s==="麻醉氣體費"||s==="麻醉氣體使用費"||s==="氣腹氣體")return"gas";return consumableKeyMap[s]||s}
+function normalizeExtras(list){return normalizeList(list).map(normalizeExtraKey)}
+function extraLabels(x){let extras=normalizeExtras(x.extras);let labels=[];if(extras.includes("protective"))labels.push(consumableLabel("protective")||"個人防護耗材");if(extras.includes("anesthesia"))labels.push(consumableLabel("anesthesia")||"麻藥");if(extras.includes("gas"))labels.push(consumableLabel("gas")||"氣腹氣體");return labels}
 function needsAnimal(x){let s=String(x?.animalNeed||"不需要");return s.includes("需要")&&!s.includes("不需要")}
 function animalTypeText(x){return needsAnimal(x)?(x.animalType||"—"):"—"}
 function animalCountText(x){if(!needsAnimal(x))return"—";let n=Number(x.animalCount);return Number.isFinite(n)&&n>0?`${n} 隻`:"—"}
@@ -694,7 +719,7 @@ function normalizeCases(cases){
   n.id=n.caseNo;
   n.status=normalizeStatus(n.status);
   n.rooms=normalizeRooms(n.rooms);
-  n.extras=normalizeList(n.extras);
+  n.extras=normalizeExtras(n.extras);
   n.audience=normalizeList(n.audience);
   n.amount=+(n.amount||n.approvedAmount)||0;
   n.systemAmount=+(n.estimatedAmount||n.systemAmount)||0;
