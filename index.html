@@ -570,6 +570,24 @@ async function api(action,payload={}){
   throw text?new Error("API 回傳格式不是 JSON，請確認 Apps Script 部署權限。"):err;
  }
 }
+async function testGetVenueSettings(action="testVenueSettingsApi"){
+ let status=0,text="";
+ console.log("testGetVenueSettings request",{apiUrl:API_URL,action});
+ try{
+  let res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action})});
+  status=res.status;
+  text=await res.text();
+  console.log("testGetVenueSettings HTTP status",status);
+  console.log("testGetVenueSettings response text",text);
+  let json=JSON.parse(text);
+  console.log("testGetVenueSettings parsed JSON",json);
+  return json;
+ }catch(err){
+  console.error("testGetVenueSettings error",{apiUrl:API_URL,action,httpStatus:status,responseText:text,originalError:err});
+  throw err;
+ }
+}
+window.testGetVenueSettings=testGetVenueSettings;
 async function ensureRequestedDatesAvailable(startDate,endDate){
  if(!startDate||!endDate)return{ok:false,message:"請先選擇使用開始日期與結束日期。"};
  if(endDate<startDate)return{ok:false,message:"使用結束日期不能早於開始日期。"};
