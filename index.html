@@ -475,7 +475,7 @@ function resetSystemSettings(){systemSettings=JSON.parse(JSON.stringify(defaultS
 function boolValue(value,defaultValue=true){if(value===undefined||value===null||value==="")return defaultValue;if(value===true||value===1)return true;let s=String(value).trim().toLowerCase();return["true","1","yes","y","是","顯示"].includes(s)}
 function normalizeVenueImagesFront(v){let images=Array.isArray(v.images)?v.images:[];if(!images.length&&v.imagesJson){try{images=JSON.parse(v.imagesJson)||[]}catch{images=[]}}return images}
 function normalizeVenueSettings(list){let source=Array.isArray(list)&&list.length?list:defaultVenueSettings;let map=Object.fromEntries(source.map(v=>[v.venueId,{...v,isVisible:boolValue(v.isVisible,true),images:normalizeVenueImagesFront(v)}]));return venueIds.map((id,i)=>({...defaultVenueSettings[i],...(map[id]||{}),isVisible:boolValue(map[id]?.isVisible??defaultVenueSettings[i].isVisible,true),images:Array.isArray(map[id]?.images)?map[id].images:[]})).sort((a,b)=>{let ao=Number(a.displayOrder),bo=Number(b.displayOrder);return Number.isFinite(ao)&&Number.isFinite(bo)?ao-bo:venueIds.indexOf(a.venueId)-venueIds.indexOf(b.venueId)})}
-async function loadVenueSettings(){let el=$("#venueIntroList");try{let res=await api("getVenueSettings");if(!res.ok)throw new Error(res.error||"場地資料載入失敗");if(Array.isArray(res.venues)){venueSettings=normalizeVenueSettings(res.venues);renderVenueIntro();if($("#venueIntroSettings"))renderVenueIntroSettings();return}}catch(err){console.error("getVenueSettings failed",err);if(el)el.innerHTML="<p class='muted'>場地資料載入失敗，請稍後再試。</p>";return}renderVenueIntro()}
+async function loadVenueSettings(){let el=$("#venueIntroList");try{let res=await api("getVenueSettings");if(res&&!Array.isArray(res)&&res.ok===false)throw new Error(res.message||res.error||"場地資料載入失敗");let venues=Array.isArray(res)?res:Array.isArray(res?.data)?res.data:Array.isArray(res?.venues)?res.venues:[];if(!venues.length){venueSettings=[];if(el)el.innerHTML="<p class='muted'>目前尚未建立場地介紹。</p>";if($("#venueIntroSettings"))renderVenueIntroSettings();return}venueSettings=normalizeVenueSettings(venues);renderVenueIntro();if($("#venueIntroSettings"))renderVenueIntroSettings();return}catch(err){console.error("getVenueSettings failed",err);if(el)el.innerHTML="<p class='muted'>場地資料載入失敗，請稍後再試。</p>";return}}
 function visibleVenueSettings(){let venues=normalizeVenueSettings(venueSettings);return venues.filter(v=>boolValue(v.isVisible,true))}
 function venueCover(v){let images=[...(v.images||[])].sort((a,b)=>(+a.sortOrder||0)-(+b.sortOrder||0));return images.find(img=>img.isCover)||images[0]||null}
 function renderVenueIntro(){let el=$("#venueIntroList");if(!el)return;let venues=visibleVenueSettings();el.innerHTML=venues.map(v=>{let cover=venueCover(v),others=(v.images||[]).filter(img=>!cover||img.fileId!==cover.fileId).sort((a,b)=>(+a.sortOrder||0)-(+b.sortOrder||0));return`<article class="venue-card"><div><div class="venue-cover">${cover?.fileUrl?`<img src="${esc(cover.fileUrl)}" alt="${esc(v.venueName)}">`:"尚未上傳場地圖片"}</div>${others.length?`<div class="venue-gallery">${others.map(img=>`<a href="${esc(img.fileUrl)}" target="_blank" rel="noopener"><img src="${esc(img.fileUrl)}" alt="${esc(img.fileName||v.venueName)}"></a>`).join("")}</div>`:""}</div><div><h3>${esc(v.venueName)}</h3>${v.shortName?`<p class="muted">${esc(v.shortName)}</p>`:""}<p class="venue-text">${esc(v.description||"")}</p><div class="summary">${v.capacity?summaryRow("可容納人數",v.capacity):""}${v.location?summaryRow("場地位置",v.location):""}${v.equipment?summaryRow("場地設備",v.equipment):""}${v.notices?summaryRow("注意事項",v.notices):""}${v.feeDescription?summaryRow("收費說明",v.feeDescription):""}</div></div></article>`}).join("")||"<p class='muted'>目前尚未建立場地介紹。</p>"}
@@ -557,9 +557,18 @@ function animalTypeText(x){return needsAnimal(x)?(x.animalType||"—"):"—"}
 function animalCountText(x){if(!needsAnimal(x))return"—";let n=Number(x.animalCount);return Number.isFinite(n)&&n>0?`${n} 隻`:"—"}
 function animalWeightText(x){return needsAnimal(x)?(x.animalWeight||"—"):"—"}
 async function api(action,payload={}){
- let res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...payload})});
- let text=await res.text();
- try{let json=JSON.parse(text);if(json.success===true&&json.ok===undefined)json.ok=true;return json}catch(err){throw new Error("API 回傳格式不是 JSON，請確認 Apps Script 部署權限。")}
+ let status=0,text="";
+ try{
+  let res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...payload})});
+  status=res.status;text=await res.text();
+  let json=JSON.parse(text);
+  if(json.success===true&&json.ok===undefined)json.ok=true;
+  if(json.success===false&&json.ok===undefined)json.ok=false;
+  return json;
+ }catch(err){
+  console.error("API request failed",{apiUrl:API_URL,action,httpStatus:status,responseText:text,originalError:err});
+  throw text?new Error("API 回傳格式不是 JSON，請確認 Apps Script 部署權限。"):err;
+ }
 }
 async function ensureRequestedDatesAvailable(startDate,endDate){
  if(!startDate||!endDate)return{ok:false,message:"請先選擇使用開始日期與結束日期。"};
