@@ -653,9 +653,7 @@ function calc(x){
  let parts=[
   ...calculateRoomFee(x),
   ...calculateCleaningFee(x),
-  calculateProtectiveFee(x),
-  calculateAnesthesiaFee(x),
-  calculateGasFee(x),
+  ...calculateConsumableFees(x),
   calculateSetupFee(x),
   ...calculateDutyFee(x)
  ].filter(item=>item&&item.amount>0);
@@ -667,9 +665,11 @@ function feeItem(label,unit,qty,amount,note,category,formulaText){return{label,u
 function formula(label,unit,qty,amount,note,category){return feeItem(label,unit,qty,amount,note,category)}
 function calculateRoomFee(x){let count=getHalfDayCount(x.startTime,x.endTime);return(x.rooms||[]).map(room=>{let unit=systemSettings.rooms[room]?.rate||0,amount=Math.round(unit*count);return formula(`${room}租金`,unit,count,amount,halfDayLabel(count),"venue")})}
 function calculateCleaningFee(x){return(x.rooms||[]).map(room=>{let unit=systemSettings.rooms[room]?.cleaning||0;return formula(`${cleaningLabel(room)}`,unit,1,unit,"1 次","other")})}
-function calculateProtectiveFee(x){let qty=x.extras?.includes("protective")?(x.people||0):0,unit=systemSettings.fees.protective,item=consumableByLegacyKey("protective");return formula(item?.itemName||"個人防護耗材",unit,qty,unit*qty,item?.unit||"人","other")}
-function calculateAnesthesiaFee(x){let qty=x.extras?.includes("anesthesia")?(x.animalCount||0):0,unit=systemSettings.fees.anesthesia,item=consumableByLegacyKey("anesthesia");return formula(item?.itemName||"麻藥",unit,qty,unit*qty,item?.unit||"隻","other")}
-function calculateGasFee(x){let qty=x.extras?.includes("gas")?(x.animalCount||0):0,unit=systemSettings.fees.gas,item=consumableByLegacyKey("gas");return formula(item?.itemName||"氣腹氣體",unit,qty,unit*qty,item?.unit||"隻","other")}
+function consumableFeeQuantity(x,legacyKey){if(legacyKey==="protective")return +(x.people||0);if(legacyKey==="anesthesia"||legacyKey==="gas")return +(x.animalCount||0);return 0}
+function calculateConsumableFees(x){let extras=normalizeExtras(x.extras),items=normalizeConsumables(consumableSettings);return items.map(item=>{let legacy=consumableKeyMap[item.legacyKey]||item.legacyKey;if(!extras.includes(legacy))return null;let qty=consumableFeeQuantity(x,legacy),unit=+(systemSettings.fees[legacy]??item.price)||0;return formula(item.itemName||consumableLabel(legacy)||legacy,unit,qty,unit*qty,item.unit||"", "other")}).filter(Boolean)}
+function calculateProtectiveFee(x){return calculateConsumableFees({...x,extras:["protective"]}).find(item=>item.label===(consumableLabel("protective")||"個人防護耗材"))||formula(consumableLabel("protective")||"個人防護耗材",0,0,0,"人","other")}
+function calculateAnesthesiaFee(x){return calculateConsumableFees({...x,extras:["anesthesia"]}).find(item=>item.label===(consumableLabel("anesthesia")||"麻藥"))||formula(consumableLabel("anesthesia")||"麻藥",0,0,0,"隻","other")}
+function calculateGasFee(x){return calculateConsumableFees({...x,extras:["gas"]}).find(item=>item.label===(consumableLabel("gas")||"氣腹氣體"))||formula(consumableLabel("gas")||"氣腹氣體",0,0,0,"隻","other")}
 function calculateSetupFee(x){let qty=(x.rooms||[]).length?1:0,unit=systemSettings.fees.setup;return formula("場佈費用",unit,qty,unit*qty,"1 次","other")}
 function dutySettings(){let f=systemSettings.fees||{};return{base:+f.dutyBasePerPersonDay||4000,staff:+f.dutyStaffCount||2,start:formatTime(f.dutyStart)||"08:00",end:formatTime(f.dutyEnd)||"17:00",overtime:+f.dutyOvertimePerPersonHalfHour||250}}
 function dateSerial(value){let m=String(value||"").match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!m)return null;return Date.UTC(+m[1],+m[2]-1,+m[3])}
